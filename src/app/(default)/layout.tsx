@@ -4,28 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 import type { FC } from 'react';
 import {
-  Archive,
-  BarChartSquare02,
-  CheckDone01,
-  ClockFastForward,
-  CurrencyDollarCircle,
-  Grid03,
   HomeLine,
-  Inbox01,
-  LifeBuoy01,
-  LineChartUp03,
-  NotificationBox,
-  Package,
-  PieChart03,
-  Rows01,
-  Settings01,
-  Settings03,
-  Star01,
-  Stars01,
-  User01,
-  UserSquare,
-  Users01,
-  UsersPlus,
   VideoRecorder,
   Image01,
   UserPlus01
