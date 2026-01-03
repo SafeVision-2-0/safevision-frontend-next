@@ -121,7 +121,7 @@ export const SidebarNavigationSlim = ({
               >
                 <Avatar
                   status="online"
-                  src="https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80"
+                  src=""
                   size="md"
                   alt="Olivia Rhye"
                 />

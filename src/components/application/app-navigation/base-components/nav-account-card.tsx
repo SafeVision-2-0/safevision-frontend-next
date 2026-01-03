@@ -7,8 +7,10 @@ import {
   BookOpen01,
   ChevronSelectorVertical,
   LogOut01,
+  Moon01,
   Plus,
   Settings01,
+  Sun,
   User01,
 } from '@untitledui/icons';
 import { useFocusManager } from 'react-aria';
@@ -24,6 +26,7 @@ import { Button } from '@/components/base/buttons/button';
 import { RadioButtonBase } from '@/components/base/radio-buttons/radio-buttons';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
+import { useTheme } from 'next-themes';
 
 type NavAccountType = {
   /** Unique identifier for the nav item. */
@@ -94,6 +97,8 @@ export const NavAccountMenu = ({
     };
   }, [onKeyDown]);
 
+  const { theme, setTheme } = useTheme();
+
   return (
     <AriaDialog
       {...dialogProps}
@@ -104,7 +109,16 @@ export const NavAccountMenu = ({
       )}
     >
       <div className="bg-primary ring-secondary rounded-xl ring-1">
-        <div className="flex flex-col gap-0.5 py-1.5">
+        <div className="flex flex-col gap-0.5 py-1.5 px-1.5">
+          <Button
+            aria-label="Toggle theme"
+            color="tertiary"
+            size="sm"
+            iconLeading={theme === 'light' ? Sun : Moon01}
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          />
+        </div>
+        <div className="border-secondary border-t flex flex-col gap-0.5 py-1.5">
           <NavAccountCardMenuItem label="View profile" icon={User01} shortcut="⌘K->P" />
           <NavAccountCardMenuItem label="Account settings" icon={Settings01} shortcut="⌘S" />
           <NavAccountCardMenuItem label="Documentation" icon={BookOpen01} />

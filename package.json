@@ -13,6 +13,7 @@
   "dependencies": {
     "@internationalized/date": "^3.10.1",
     "@react-stately/utils": "^3.11.0",
+    "@react-types/overlays": "^3.9.2",
     "@untitledui/icons": "^0.0.19",
     "motion": "^12.23.26",
     "next": "16.1.1",
