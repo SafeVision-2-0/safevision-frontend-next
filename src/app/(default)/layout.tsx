@@ -1,7 +1,6 @@
 'use client';
 
 import type { Metadata, Viewport } from 'next';
-import '@/styles/globals.css';
 import type { FC } from 'react';
 import {
   HomeLine,
@@ -48,7 +47,7 @@ export default function DefaultLayout({
         activeUrl={pathname}
         items={navItems}
       />
-      <div>{children}</div>
+      <div className="pl-17">{children}</div>
     </>
   );
 }
