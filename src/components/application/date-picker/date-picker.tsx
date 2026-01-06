@@ -44,7 +44,7 @@ export const DatePicker = ({
   return (
     <AriaDatePicker shouldCloseOnSelect={false} {...props} value={value} onChange={setValue}>
       <AriaGroup>
-        <Button size="md" color="secondary" iconLeading={CalendarIcon}>
+        <Button size="md" className="w-full justify-start" color="secondary" iconLeading={CalendarIcon}>
           {formattedDate}
         </Button>
       </AriaGroup>
