@@ -124,7 +124,7 @@ export const DateRangePicker = ({
       onChange={setValue}
     >
       <AriaGroup>
-        <Button size="md" color="secondary" iconLeading={CalendarIcon}>
+        <Button size="md" color="secondary" iconLeading={CalendarIcon} className="w-full justify-start">
           {!value ? (
             <span className="text-placeholder">Select dates</span>
           ) : (

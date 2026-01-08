@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Your App Name',
-  description: 'Your app description',
+  title: 'SafeVision',
+  description: 'SafeVision App',
 };
 
 export const viewport: Viewport = {

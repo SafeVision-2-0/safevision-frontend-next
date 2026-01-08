@@ -47,7 +47,7 @@ export default function DefaultLayout({
         activeUrl={pathname}
         items={navItems}
       />
-      <div className="pl-17">{children}</div>
+      <div className="lg:pl-17">{children}</div>
     </>
   );
 }
