@@ -71,7 +71,7 @@ export default function Camera() {
                 name="Jane Antoinette Doe"
                 time="12.30:50 AM"
                 date="Jan 30, 2025"
-                imageUrl={`https://picsum.photos/id/${180 + i}/200/300`}
+                imageUrl={`https://picsum.photos/id/${180 + i}/300/200`}
               />
             ))}
           </div>
