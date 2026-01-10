@@ -9,6 +9,9 @@ import { Tabs } from '@/components/application/tabs/tabs';
 import { PeopleTable } from './_components/people-table';
 import { TeamTable } from './_components/team-table';
 import { PositionTable } from './_components/position-table';
+import * as Modals from "@/components/application/modals/modal";
+import { Cake, Calendar, Clock, IdCard, Mars, Users, X as Close } from 'lucide-react';
+import {Avatar} from "@/components/base/avatar/avatar";
 
 const tabs = [
   { id: 'people', label: 'People' },
