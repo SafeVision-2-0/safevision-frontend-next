@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { SortDescriptor } from 'react-aria-components';
+import React, { useMemo, useState } from 'react';
+import { DateValue, SortDescriptor } from 'react-aria-components';
 import { Edit01, Plus, Trash01 } from '@untitledui/icons';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { Badge } from '@/components/base/badges/badges';
@@ -11,13 +11,48 @@ import { PaginationCardMinimal } from '@/components/application/pagination/pagin
 import { Table, TableCard } from '@/components/application/table/table';
 import Form from './form';
 import peopleData from '../people-data.json';
+import { Input } from '@/components/base/input/input';
+import { Select } from '@/components/base/select/select';
+import { Label } from '@/components/base/input/label';
+import { DatePicker } from '@/components/application/date-picker/date-picker';
+import { MultiSelect } from '@/components/base/select/multi-select';
+import { IdCard, Mars, Users, Venus } from 'lucide-react';
+import { useListData } from 'react-stately';
 
 export function PeopleTable() {
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'status',
     direction: 'ascending',
   });
+
+  const genders = [
+    { label: 'Male', id: 'm', icon: Mars },
+    { label: 'Female', id: 'f', icon: Venus },
+  ];
+
+  const teams = [
+    { label: 'Team Orion', id: '1' },
+    { label: 'Team Gemini', id: '2' },
+    { label: 'Team Aphrodite', id: '3' },
+    { label: 'Team Gaia', id: '4' },
+  ];
+
+  const positions = [
+    { label: 'AI/ML Engineer', id: '1' },
+    { label: 'UI/UX Designer', id: '2' },
+    { label: 'Frontend Engineer', id: '3' },
+    { label: 'Backend Engineer', id: '4' },
+  ];
+
+  const selectedTeams = useListData({
+    initialItems: [],
+  });
+  const selectedPositions = useListData({
+    initialItems: [],
+  });
+  const [selectedGender, setSelectedGender] = React.useState<string>('m');
+  const [selectedBirth, setSelectedBirth] = useState<DateValue | null>(null);
 
   const sortedItems = useMemo(() => {
     return peopleData.items.sort((a, b) => {
@@ -51,7 +86,7 @@ export function PeopleTable() {
           badge="32 poeple"
           contentTrailing={
             <div className="">
-              <Button iconLeading={Plus} onPress={() => setIsAddOpen(true)}>
+              <Button iconLeading={Plus} onClick={() => setIsOpen(true)}>
                 Add people
               </Button>
             </div>
@@ -138,7 +173,90 @@ export function PeopleTable() {
           className="px-4 py-3 md:px-5 md:pt-3 md:pb-4"
         />
       </TableCard.Root>
-      <Form isOpen={isAddOpen} onOpenChange={setIsAddOpen} />
+
+      <Form isOpen={isOpen} onOpenChange={setIsOpen} title="Add Person">
+        <div className="flex w-full flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            <img
+              src="https://picsum.photos/id/180/300/200"
+              alt=""
+              className="aspect-video w-full rounded-lg object-cover"
+            />
+            <div className="grid grid-cols-4 gap-3">
+              {[...Array(3)].map((_, i) => (
+                <img
+                  key={i}
+                  src={`https://picsum.photos/id/${181 + i}/300/200`}
+                  alt=""
+                  className="aspect-video w-full rounded-lg object-cover"
+                />
+              ))}
+              <div className="flex aspect-video w-full cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-900">
+                <span>+3</span>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            <Input isRequired label="Name" className="w-full" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              isRequired
+              selectedKey={selectedGender}
+              placeholder="Select Person"
+              items={genders}
+              className="w-full"
+              label="Gender"
+              onSelectionChange={(key) => setSelectedGender(key as string)}
+            >
+              {(item) => (
+                <Select.Item
+                  id={item.id}
+                  supportingText={item.supportingText}
+                  isDisabled={item.isDisabled}
+                  icon={item.icon}
+                  avatarUrl={item.avatarUrl}
+                >
+                  {item.label}
+                </Select.Item>
+              )}
+            </Select>
+            <div className="flex flex-col gap-1.5">
+              <Label isRequired={true} className="">
+                Birth Date
+              </Label>
+              <DatePicker
+                aria-label="Date picker"
+                value={selectedBirth}
+                onChange={setSelectedBirth}
+                className="w-full"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <MultiSelect
+              isRequired
+              placeholderIcon={IdCard}
+              selectedItems={selectedPositions}
+              label="Positions"
+              placeholder="Search Positions"
+              items={positions}
+            >
+              {(item) => <MultiSelect.Item id={item.id}>{item.label}</MultiSelect.Item>}
+            </MultiSelect>
+            <MultiSelect
+              isRequired
+              placeholderIcon={Users}
+              selectedItems={selectedTeams}
+              label="Teams"
+              placeholder="Search Teams"
+              items={teams}
+            >
+              {(item) => <MultiSelect.Item id={item.id}>{item.label}</MultiSelect.Item>}
+            </MultiSelect>
+          </div>
+        </div>
+      </Form>
     </>
   );
 }

@@ -51,7 +51,7 @@ export function TeamTable() {
           badge="5 teams"
           contentTrailing={
             <div className="">
-              <Button iconLeading={Plus} onPress={() => setIsAddOpen(true)}>
+              <Button iconLeading={Plus} onClick={() => setIsAddOpen(true)}>
                 Add Team
               </Button>
             </div>

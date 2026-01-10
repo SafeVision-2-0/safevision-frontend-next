@@ -51,7 +51,7 @@ export function PositionTable() {
           badge="5 positions"
           contentTrailing={
             <div className="">
-              <Button iconLeading={Plus} onPress={() => setIsAddOpen(true)}>
+              <Button iconLeading={Plus} onClick={() => setIsAddOpen(true)}>
                 Add Position
               </Button>
             </div>
