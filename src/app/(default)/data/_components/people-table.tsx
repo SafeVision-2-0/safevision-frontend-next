@@ -12,15 +12,16 @@ import { Table, TableCard } from '@/components/application/table/table';
 import Form from './form';
 import peopleData from '../people-data.json';
 import { Input } from '@/components/base/input/input';
-import { Select } from '@/components/base/select/select';
+import { Select, SelectItemType } from '@/components/base/select/select';
 import { Label } from '@/components/base/input/label';
 import { DatePicker } from '@/components/application/date-picker/date-picker';
 import { MultiSelect } from '@/components/base/select/multi-select';
 import { IdCard, Mars, Users, Venus } from 'lucide-react';
 import { useListData } from 'react-stately';
+import Delete from "@/components/popup/delete";
 
 export function PeopleTable() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'status',
     direction: 'ascending',
@@ -45,14 +46,15 @@ export function PeopleTable() {
     { label: 'Backend Engineer', id: '4' },
   ];
 
-  const selectedTeams = useListData({
+  const selectedTeams = useListData<SelectItemType>({
     initialItems: [],
   });
-  const selectedPositions = useListData({
+  const selectedPositions = useListData<SelectItemType>({
     initialItems: [],
   });
   const [selectedGender, setSelectedGender] = React.useState<string>('m');
   const [selectedBirth, setSelectedBirth] = useState<DateValue | null>(null);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
 
   const sortedItems = useMemo(() => {
     return peopleData.items.sort((a, b) => {
@@ -78,6 +80,14 @@ export function PeopleTable() {
     });
   }, [sortDescriptor]);
 
+  const onDelete = () => {
+    setShowDelete(true);
+  }
+
+  const onEdit = () => {
+    setShowForm(true);
+  }
+
   return (
     <>
       <TableCard.Root size="sm">
@@ -86,7 +96,7 @@ export function PeopleTable() {
           badge="32 poeple"
           contentTrailing={
             <div className="">
-              <Button iconLeading={Plus} onClick={() => setIsOpen(true)}>
+              <Button iconLeading={Plus} onClick={() => setShowForm(true)}>
                 Add people
               </Button>
             </div>
@@ -157,8 +167,20 @@ export function PeopleTable() {
                 </Table.Cell>
                 <Table.Cell className="px-3">
                   <div className="flex justify-end gap-0.5">
-                    <ButtonUtility size="xs" color="tertiary" tooltip="Delete" icon={Trash01} />
-                    <ButtonUtility size="xs" color="tertiary" tooltip="Edit" icon={Edit01} />
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Delete"
+                      icon={Trash01}
+                      onClick={onDelete}
+                    />
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Edit"
+                      icon={Edit01}
+                      onClick={onEdit}
+                    />
                   </div>
                 </Table.Cell>
               </Table.Row>
@@ -174,7 +196,7 @@ export function PeopleTable() {
         />
       </TableCard.Root>
 
-      <Form isOpen={isOpen} onOpenChange={setIsOpen} title="Add Person">
+      <Form isOpen={showForm} onOpenChange={setShowForm} title="Add Person">
         <div className="flex w-full flex-col gap-4">
           <div className="grid grid-cols-1 gap-4">
             <img
@@ -257,6 +279,8 @@ export function PeopleTable() {
           </div>
         </div>
       </Form>
+
+      <Delete isOpen={showDelete} onOpenChange={setShowDelete} />
     </>
   );
 }

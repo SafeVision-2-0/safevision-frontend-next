@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SortDescriptor } from 'react-aria-components';
 import { Edit01, Plus, Trash01 } from '@untitledui/icons';
 import { Avatar } from '@/components/base/avatar/avatar';
@@ -11,9 +11,11 @@ import { PaginationCardMinimal } from '@/components/application/pagination/pagin
 import { Table, TableCard } from '@/components/application/table/table';
 import Form from './form';
 import teamData from '../team-data.json';
+import {Input} from "@/components/base/input/input";
 
 export function TeamTable() {
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'status',
     direction: 'ascending',
@@ -43,6 +45,14 @@ export function TeamTable() {
     });
   }, [sortDescriptor]);
 
+  const onDelete = () => {
+    setShowDelete(true);
+  };
+
+  const onEdit = () => {
+    setShowForm(true);
+  };
+
   return (
     <>
       <TableCard.Root size="sm">
@@ -51,7 +61,7 @@ export function TeamTable() {
           badge="5 teams"
           contentTrailing={
             <div className="">
-              <Button iconLeading={Plus} onClick={() => setIsAddOpen(true)}>
+              <Button iconLeading={Plus} onClick={() => setShowForm(true)}>
                 Add Team
               </Button>
             </div>
@@ -106,8 +116,20 @@ export function TeamTable() {
                 <Table.Cell className="whitespace-nowrap">{item.createdAt}</Table.Cell>
                 <Table.Cell className="px-3">
                   <div className="flex justify-end gap-0.5">
-                    <ButtonUtility size="xs" color="tertiary" tooltip="Delete" icon={Trash01} />
-                    <ButtonUtility size="xs" color="tertiary" tooltip="Edit" icon={Edit01} />
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Delete"
+                      icon={Trash01}
+                      onClick={onDelete}
+                    />
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Edit"
+                      icon={Edit01}
+                      onClick={onEdit}
+                    />
                   </div>
                 </Table.Cell>
               </Table.Row>
@@ -122,7 +144,14 @@ export function TeamTable() {
           className="px-4 py-3 md:px-5 md:pt-3 md:pb-4"
         />
       </TableCard.Root>
-      <Form isOpen={isAddOpen} onOpenChange={setIsAddOpen} />
+
+      <Form isOpen={showForm} onOpenChange={setShowForm} title="Add Team">
+        <div className="flex w-full flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            <Input isRequired label="Team Name" className="w-full" />
+          </div>
+        </div>
+      </Form>
     </>
   );
 }
