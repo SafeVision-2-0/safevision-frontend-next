@@ -47,7 +47,7 @@ export function LiveCamera() {
         <Select
           isRequired
           selectedKey={selectedKey}
-          placeholder="Select team member"
+          placeholder="Select Camera"
           items={cameraItems}
           className="w-64"
           onSelectionChange={(key) => setSelectedKey(key as string)}
