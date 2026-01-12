@@ -1,0 +1,165 @@
+'use client';
+
+import React, { useMemo, useState } from 'react';
+import { SortDescriptor } from 'react-aria-components';
+import { Edit01, Plus, Trash01 } from '@untitledui/icons';
+import { Avatar } from '@/components/base/avatar/avatar';
+import { Badge } from '@/components/base/badges/badges';
+import { Button } from '@/components/base/buttons/button';
+import { ButtonUtility } from '@/components/base/buttons/button-utility';
+import { PaginationCardMinimal } from '@/components/application/pagination/pagination';
+import { Table, TableCard } from '@/components/application/table/table';
+import Form from './form';
+import positionData from '../position-data.json';
+import {Input} from "@/components/base/input/input";
+import {Select} from "@/components/base/select/select";
+import {Label} from "@/components/base/input/label";
+import {DatePicker} from "@/components/application/date-picker/date-picker";
+import {MultiSelect} from "@/components/base/select/multi-select";
+import {IdCard, Users} from "lucide-react";
+import Delete from '@/components/popup/delete';
+
+export function PositionTable() {
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'status',
+    direction: 'ascending',
+  });
+
+  const sortedItems = useMemo(() => {
+    return positionData.items.sort((a, b) => {
+      const first = a[sortDescriptor.column as keyof typeof a];
+      const second = b[sortDescriptor.column as keyof typeof b];
+
+      if (
+        (typeof first === 'number' && typeof second === 'number') ||
+        (typeof first === 'boolean' && typeof second === 'boolean')
+      ) {
+        return sortDescriptor.direction === 'descending' ? second - first : first - second;
+      }
+
+      if (typeof first === 'string' && typeof second === 'string') {
+        let cmp = first.localeCompare(second);
+        if (sortDescriptor.direction === 'descending') {
+          cmp *= -1;
+        }
+        return cmp;
+      }
+
+      return 0;
+    });
+  }, [sortDescriptor]);
+
+  const onDelete = () => {
+    setShowDelete(true);
+  };
+
+  const onEdit = () => {
+    setShowForm(true);
+  };
+
+  return (
+    <>
+      <TableCard.Root size="sm">
+        <TableCard.Header
+          title="Manage Positions"
+          badge="5 positions"
+          contentTrailing={
+            <div className="">
+              <Button iconLeading={Plus} onClick={() => setShowForm(true)}>
+                Add Position
+              </Button>
+            </div>
+          }
+        />
+        <Table
+          aria-label="Position members"
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}
+        >
+          <Table.Header>
+            <Table.Head
+              id="name"
+              label="Name"
+              isRowHeader
+              allowsSorting
+              className="w-full max-w-1/4"
+            />
+            <Table.Head id="members" label="Members" allowsSorting />
+            <Table.Head id="created" label="Created At" allowsSorting />
+            <Table.Head id="actions" />
+          </Table.Header>
+
+          <Table.Body items={sortedItems}>
+            {(item) => (
+              <Table.Row id={item.id}>
+                <Table.Cell className="whitespace-nowrap">{item.name}</Table.Cell>
+                <Table.Cell className="whitespace-nowrap">
+                  <div className="flex -space-x-1">
+                    {item.members.slice(0, 5).map((member, i) => (
+                      <Avatar
+                        className="ring-bg-primary ring-[1.5px]"
+                        size="xs"
+                        src={member.avatarUrl}
+                        alt="Olivia Rhye"
+                      />
+                    ))}
+
+                    {item.totalMembers > 5 && (
+                      <Avatar
+                        size="xs"
+                        className="ring-bg-primary ring-[1.5px]"
+                        placeholder={
+                          <span className="text-quaternary text-xs font-semibold">
+                            +{item.totalMembers - 5}
+                          </span>
+                        }
+                      />
+                    )}
+                  </div>
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap">{item.createdAt}</Table.Cell>
+                <Table.Cell className="px-3">
+                  <div className="flex justify-end gap-0.5">
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Delete"
+                      icon={Trash01}
+                      onClick={onDelete}
+                    />
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Edit"
+                      icon={Edit01}
+                      onClick={onEdit}
+                    />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table>
+
+        <PaginationCardMinimal
+          align="right"
+          page={1}
+          total={10}
+          className="px-4 py-3 md:px-5 md:pt-3 md:pb-4"
+        />
+      </TableCard.Root>
+
+      <Form isOpen={showForm} onOpenChange={setShowForm} title="Add Position">
+        <div className="flex w-full flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            <Input isRequired label="Position Name" className="w-full" />
+          </div>
+        </div>
+      </Form>
+
+      <Delete isOpen={showDelete} onOpenChange={setShowDelete} />
+    </>
+  );
+}

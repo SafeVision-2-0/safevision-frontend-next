@@ -83,19 +83,20 @@ interface MultiSelectProps
 }
 
 export const MultiSelectBase = ({
-  items,
-  children,
-  size = 'sm',
-  selectedItems,
-  onItemCleared,
-  onItemInserted,
-  shortcut,
-  placeholder = 'Search',
-  // Omit these props to avoid conflicts with the `Select` component
-  name: _name,
-  className: _className,
-  ...props
-}: MultiSelectProps) => {
+                                  items,
+                                  children,
+                                  size = 'sm',
+                                  selectedItems,
+                                  onItemCleared,
+                                  onItemInserted,
+                                  shortcut,
+                                  placeholder = 'Search',
+                                  placeholderIcon, // Detructured here
+                                  // Omit these props to avoid conflicts with the `Select` component
+                                  name: _name,
+                                  className: _className,
+                                  ...props
+                                }: MultiSelectProps) => {
   const { contains } = useFilter({ sensitivity: 'base' });
   const selectedKeys = selectedItems.items.map((item) => item.id);
 
@@ -199,6 +200,7 @@ export const MultiSelectBase = ({
               shortcut={shortcut}
               ref={placeholderRef}
               placeholder={placeholder}
+              placeholderIcon={placeholderIcon} // Passed down here
               // This is a workaround to correctly calculating the trigger width
               // while using ResizeObserver wasn't 100% reliable.
               onFocus={onResize}
@@ -223,6 +225,7 @@ export const MultiSelectBase = ({
     </ComboboxContext.Provider>
   );
 };
+
 
 const InnerMultiSelect = ({
   isDisabled,

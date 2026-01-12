@@ -1,22 +1,16 @@
 'use client';
 
 import Section from '@/components/layout/section';
-import { LiveCamera } from '@/app/(default)/camera/_components/live-camera';
 import Heading from '@/components/layout/heading';
-import { DatePicker } from '@/components/application/date-picker/date-picker';
 import { Select } from '@/components/base/select/select';
 import { User01 } from '@untitledui/icons';
-import { Camera, Clock, Calendar, X as Close, Cake, Mars, Users, IdCard } from 'lucide-react';
-import { CapturedPersonItem } from '@/app/(default)/camera/_components/captured-person-item';
+import { Clock, Calendar, X as Close, Cake, Mars, Users, IdCard } from 'lucide-react';
 import { getLocalTimeZone, today } from '@internationalized/date';
 import { useState } from 'react';
 import { DateValue } from 'react-aria-components';
 import { DateRangePicker } from '@/components/application/date-picker/date-range-picker';
 import * as Paginations from '@/components/application/pagination/pagination';
 import * as Modals from '@/components/application/modals/modal';
-import { Button } from '@/components/base/buttons/button';
-import Image from 'next/image';
-import { AvatarLabelGroup } from '@/components/base/avatar/avatar-label-group';
 import { Avatar } from '@/components/base/avatar/avatar';
 
 export default function Captured() {

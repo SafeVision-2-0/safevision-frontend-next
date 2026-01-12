@@ -1,0 +1,64 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "AI/ML Engineer",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/45.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/12.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/27.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/41.jpg" }
+      ],
+      "totalMembers": 9,
+      "createdAt": "2022-06-18"
+    },
+    {
+      "id": 2,
+      "name": "Backend Engineer",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/55.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/67.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/18.jpg" }
+      ],
+      "totalMembers": 3,
+      "createdAt": "2021-09-02"
+    },
+    {
+      "id": 3,
+      "name": "Frontend Engineer",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/60.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/72.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/78.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/90.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/83.jpg" }
+      ],
+      "totalMembers": 14,
+      "createdAt": "2020-11-25"
+    },
+    {
+      "id": 4,
+      "name": "UI/UX Designer",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/9.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/14.jpg" }
+      ],
+      "totalMembers": 2,
+      "createdAt": "2023-03-14"
+    },
+    {
+      "id": 5,
+      "name": "Project Manager",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/25.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/31.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/44.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/66.jpg" }
+      ],
+      "totalMembers": 6,
+      "createdAt": "2019-08-09"
+    }
+  ],
+  "total": 5
+}
