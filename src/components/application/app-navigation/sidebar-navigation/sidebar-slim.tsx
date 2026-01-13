@@ -22,6 +22,7 @@ import { NavItemBase } from '../base-components/nav-item';
 import { NavItemButton } from '../base-components/nav-item-button';
 import { NavList } from '../base-components/nav-list';
 import type { NavItemType } from '../config';
+import SafevisionAppLogo from '@/components/foundations/logo/safevision-app-logo';
 
 interface SidebarNavigationSlimProps {
   /** URL of the currently active item. */
@@ -75,7 +76,10 @@ export const SidebarNavigationSlim = ({
           hideBorder && !isSecondarySidebarVisible && 'ring-transparent',
         )}
       >
-        <div className="flex justify-center px-3">SV</div>
+
+        <div className="flex justify-center px-3">
+          <SafevisionAppLogo />
+        </div>
 
         <ul className="mt-4 flex flex-col gap-0.5 px-3">
           {items.map((item) => (
