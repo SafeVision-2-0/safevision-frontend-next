@@ -64,3 +64,29 @@ export async function updatePosition(
 
   return res.json();
 }
+
+export async function assignPosition(
+  positionId: number,
+  profileId: number,
+): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile-position`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ positionId, profileId }),
+  });
+
+  return res.json();
+}
+
+export async function unassignPosition(
+  positionId: number,
+  profileId: number,
+): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile-position/${profileId}/${positionId}`, {
+    method: 'DELETE',
+  });
+
+  return res.json();
+}

@@ -21,17 +21,19 @@ import { useListData } from 'react-stately';
 import Delete from '@/components/popup/delete';
 import useSWR from 'swr';
 import { getPeople, createPerson, deletePerson, updatePerson } from '@/lib/api/people';
-import { getPositions } from '@/lib/api/positions';
-import { getTeams } from '@/lib/api/teams';
+import { assignPosition, getPositions, unassignPosition } from '@/lib/api/positions';
+import { assignTeam, getTeams, unassignTeam } from '@/lib/api/teams';
 import { formatDate } from '@/utils/format';
 
 export function PeopleTable() {
-  const [showForm, setShowForm] = useState(false);
+  const [showBioForm, setShowBioForm] = useState(false);
+  const [showAssignForm, setShowAssignForm] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+  const [isAssigning, setIsAssigning] = useState(false);
   const [page, setPage] = useState<number>(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'created_at',
@@ -57,9 +59,12 @@ export function PeopleTable() {
   const [selectedGender, setSelectedGender] = useState<string>('m');
   const [selectedBirth, setSelectedBirth] = useState<DateValue | null>(null);
 
+  const teams = teamsData?.data?.map((t) => ({ label: t.name, id: String(t.id) })) || [];
+  const positions = positionsData?.data?.map((p) => ({ label: p.name, id: String(p.id) })) || [];
+
   const genders = [
-    { label: 'Male', id: 'm', icon: Mars },
-    { label: 'Female', id: 'f', icon: Venus },
+    { label: 'Male', id: 'M', icon: Mars },
+    { label: 'Female', id: 'F', icon: Venus },
   ];
 
   const selectedTeams = useListData<SelectItemType>({ initialItems: [] });
@@ -67,11 +72,11 @@ export function PeopleTable() {
 
   const resetForm = () => {
     setPersonName('');
-    setSelectedGender('m');
+    setSelectedGender('M');
     setSelectedBirth(null);
     selectedTeams.remove(...selectedTeams.items.map((i) => i.id));
     selectedPositions.remove(...selectedPositions.items.map((i) => i.id));
-    setShowForm(false);
+    setShowBioForm(false);
     setIsEditMode(false);
     setSelectedPersonId(null);
   };
@@ -88,18 +93,74 @@ export function PeopleTable() {
       };
 
       if (isEditMode && selectedPersonId) {
-        await updatePerson(selectedPersonId, payload);
+        const res = await updatePerson(selectedPersonId, payload);
       } else {
-        await createPerson(payload);
+        const res = await createPerson(payload);
+        setSelectedPersonId(String(res.data.id));
+        console.log(res);
+        console.log(res.data.id);
+        console.log(selectedPersonId);
       }
       await mutate();
-      resetForm();
+      setShowAssignForm(true);
+      setShowBioForm(false);
     } catch (error) {
       console.error(`Failed to ${isEditMode ? 'update' : 'create'} person:`, error);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleAssignPerson = async () => {
+    await mutate();
+    setShowAssignForm(false);
+    setShowBioForm(false);
+    resetForm();
+  };
+
+  const handleAssignPosition = async (positionId: number) => {
+    setIsAssigning(true);
+    try {
+      await assignPosition(positionId, Number(selectedPersonId));
+    } catch (error) {
+      console.error('Failed to assign position:', error);
+    } finally {
+      setIsAssigning(false);
+    }
+  }
+
+  const handleUnassignPosition = async (positionId: number) => {
+    setIsAssigning(true);
+    try {
+      await unassignPosition(positionId, Number(selectedPersonId));
+    } catch (error) {
+      console.error('Failed to unassign position:', error);
+    } finally {
+      setIsAssigning(false);
+    }
+  }
+
+  const handleAssignTeam = async (teamId: number) => {
+    setIsAssigning(true);
+    try {
+      await assignTeam(teamId, Number(selectedPersonId));
+    } catch (error) {
+      console.error('Failed to assign team:', error);
+    } finally {
+      setIsAssigning(false);
+    }
+  }
+
+  const handleUnassignTeam = async (teamId: number) => {
+    setIsAssigning(true);
+    try {
+      await unassignTeam(teamId, Number(selectedPersonId));
+    } catch (error) {
+      console.error('Failed to unassign team:', error);
+    } finally {
+      setIsAssigning(false);
+    }
+  }
 
   const handleDeletePerson = async () => {
     if (!selectedPersonId) return;
@@ -148,12 +209,12 @@ export function PeopleTable() {
     }
 
     setIsEditMode(true);
-    setShowForm(true);
+    setShowBioForm(true);
   };
 
   const onAdd = () => {
     resetForm();
-    setShowForm(true);
+    setShowBioForm(true);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -279,9 +340,52 @@ export function PeopleTable() {
       </TableCard.Root>
 
       <Form
-        isOpen={showForm}
+        isOpen={showAssignForm}
         onOpenChange={(open) => {
-          setShowForm(open);
+          setShowAssignForm(open);
+          if (!open) resetForm();
+        }}
+        title="Assign Image and Group"
+        buttonLabel="Done"
+        showSecondaryButton={false}
+        onSave={handleAssignPerson}
+        isSubmitting={isSubmitting}
+      >
+        selected id: {selectedPersonId}
+        <div className="grid grid-cols-2 gap-4">
+          <MultiSelect
+            isRequired
+            placeholderIcon={IdCard}
+            selectedItems={selectedPositions}
+            label="Positions"
+            placeholder="Search Positions"
+            items={positions}
+            isDisabled={isAssigning}
+            onItemInserted={(key) => handleAssignPosition(key as number)}
+            onItemCleared={(key) => handleUnassignPosition(key as number)}
+          >
+            {(item) => <MultiSelect.Item id={item.id}>{item.label}</MultiSelect.Item>}
+          </MultiSelect>
+          <MultiSelect
+            isRequired
+            placeholderIcon={Users}
+            selectedItems={selectedTeams}
+            isDisabled={isAssigning}
+            label="Teams"
+            placeholder="Search Teams"
+            items={teams}
+            onItemInserted={(key) => handleAssignTeam(key as number)}
+            onItemCleared={(key) => handleUnassignTeam(key as number)}
+          >
+            {(item) => <MultiSelect.Item id={item.id}>{item.label}</MultiSelect.Item>}
+          </MultiSelect>
+        </div>
+      </Form>
+
+      <Form
+        isOpen={showBioForm}
+        onOpenChange={(open) => {
+          setShowBioForm(open);
           if (!open) resetForm();
         }}
         title={isEditMode ? 'Edit Person' : 'Add Person'}

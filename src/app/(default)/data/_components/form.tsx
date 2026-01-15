@@ -8,6 +8,8 @@ interface FormProps {
   onOpenChange: (isOpen: boolean) => void;
   onSave: () => void | Promise<void>;
   buttonLabel?: string;
+  secondaryButtonLabel?: string;
+  showSecondaryButton?: boolean;
   title?: string;
   children: React.ReactNode;
   isSubmitting?: boolean;
@@ -19,6 +21,8 @@ export default function Form({
   onSave,
   title = 'Add Data',
   buttonLabel = 'Add',
+  secondaryButtonLabel = 'Cancel',
+  showSecondaryButton = true,
   children,
   isSubmitting = false,
 }: FormProps) {
@@ -41,9 +45,11 @@ export default function Form({
             </div>
             {children}
             <div className="flex w-full justify-end gap-3">
-              <Button color="secondary" onClick={onClose} isDisabled={isSubmitting}>
-                Cancel
-              </Button>
+              {showSecondaryButton && (
+                <Button color="secondary" onClick={onClose} isDisabled={isSubmitting}>
+                  {secondaryButtonLabel}
+                </Button>
+              )}
               <Button onClick={handleSave} isDisabled={isSubmitting}>
                 {buttonLabel}
               </Button>

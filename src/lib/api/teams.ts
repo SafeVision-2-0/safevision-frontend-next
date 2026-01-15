@@ -43,7 +43,10 @@ export async function deleteTeam(id: string): Promise<{ success: boolean; messag
   return res.json();
 }
 
-export async function updateTeam(id: string, name: string): Promise<{ success: boolean; message: string }> {
+export async function updateTeam(
+  id: string,
+  name: string,
+): Promise<{ success: boolean; message: string }> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${id}`, {
     method: 'PUT',
     headers: {
@@ -58,3 +61,33 @@ export async function updateTeam(id: string, name: string): Promise<{ success: b
 
   return res.json();
 }
+
+export async function assignTeam(
+  teamId: number,
+  profileId: number,
+): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile-team`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ teamId, profileId }),
+  });
+
+  return res.json();
+}
+
+export async function unassignTeam(
+  teamId: number,
+  profileId: number,
+): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/profile-team/${profileId}/${teamId}`,
+    {
+      method: 'DELETE',
+    },
+  );
+
+  return res.json();
+}
+

@@ -1,4 +1,4 @@
-import { PersonResponse } from '@/types/person';
+import { Person, PersonResponse } from '@/types/person';
 
 export async function getPeople(page: number = 1, limit: number = 10): Promise<PersonResponse> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/person?page=${page}&limit=${limit}`, {
@@ -20,7 +20,7 @@ export interface CreatePersonPayload {
 
 export async function createPerson(
   data: CreatePersonPayload,
-): Promise<{ success: boolean; message: string }> {
+): Promise<{ success: boolean; message: string; data: Person }> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
     method: 'POST',
     headers: {
@@ -51,7 +51,7 @@ export async function deletePerson(id: string): Promise<{ success: boolean; mess
 export async function updatePerson(
   id: string,
   data: CreatePersonPayload,
-): Promise<{ success: boolean; message: string }> {
+): Promise<{ success: boolean; message: string; data: Person }> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/${id}`, {
     method: 'PUT',
     headers: {

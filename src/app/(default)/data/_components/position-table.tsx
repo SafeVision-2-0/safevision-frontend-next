@@ -136,10 +136,10 @@ export function PositionTable() {
                 <Table.Row id={item.id}>
                   <Table.Cell className="whitespace-nowrap">{item.name}</Table.Cell>
                   <Table.Cell className="whitespace-nowrap">
-                    <div className="flex -space-x-1">
-                      {item.memberCount > 0 ? (
-                        <Tooltip title="Show members">
-                          <TooltipTrigger className="cursor-pointer">
+                    {item.memberCount > 0 ? (
+                      <Tooltip title="Show members">
+                        <TooltipTrigger className="cursor-pointer">
+                          <div className="flex -space-x-1">
                             {item.previewImages.slice(0, 5).map((img, i) => (
                               <Avatar
                                 className="ring-bg-primary ring-[1.5px]"
@@ -159,12 +159,12 @@ export function PositionTable() {
                                 }
                               />
                             )}
-                          </TooltipTrigger>
-                        </Tooltip>
-                      ) : (
-                        'No members yet'
-                      )}
-                    </div>
+                          </div>
+                        </TooltipTrigger>
+                      </Tooltip>
+                    ) : (
+                      'No members yet'
+                    )}
                   </Table.Cell>
                   <Table.Cell className="whitespace-nowrap">
                     {formatDate(item.created_at)}
