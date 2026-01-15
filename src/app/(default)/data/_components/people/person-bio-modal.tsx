@@ -1,0 +1,117 @@
+import React, { useEffect, useState } from 'react';
+import { DateValue } from 'react-aria-components';
+import { Mars, Venus } from 'lucide-react';
+import { parseDate } from '@internationalized/date';
+import Form from '../form';
+import { Input } from '@/components/base/input/input';
+import { Select } from '@/components/base/select/select';
+import { Label } from '@/components/base/input/label';
+import { DatePicker } from '@/components/application/date-picker/date-picker';
+import { createPerson, updatePerson } from '@/lib/api/people';
+
+interface PersonBioModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  personToEdit: any | null; // Pass the full person object if editing
+  onSuccess: (newPersonId: string) => void;
+}
+
+const GENDERS = [
+  { label: 'Male', id: 'M', icon: Mars },
+  { label: 'Female', id: 'F', icon: Venus },
+];
+
+export function PersonBioModal({
+  isOpen,
+  onOpenChange,
+  personToEdit,
+  onSuccess,
+}: PersonBioModalProps) {
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState<string>('M');
+  const [birth, setBirth] = useState<DateValue | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (personToEdit) {
+        setName(personToEdit.name);
+        setGender(personToEdit.gender);
+        try {
+          if (personToEdit.birth) setBirth(parseDate(personToEdit.birth));
+        } catch {}
+      } else {
+        // Reset for create mode
+        setName('');
+        setGender('M');
+        setBirth(null);
+      }
+    }
+  }, [isOpen, personToEdit]);
+
+  const handleSubmit = async () => {
+    if (!name.trim()) return;
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        name,
+        gender,
+        birth: birth ? birth.toString() : '',
+      };
+
+      let resId;
+      if (personToEdit) {
+        await updatePerson(String(personToEdit.id), payload);
+        resId = String(personToEdit.id);
+      } else {
+        const res = await createPerson(payload);
+        resId = String(res.data.id);
+      }
+      onSuccess(resId);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Form
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title={personToEdit ? 'Edit Person' : 'Add Person'}
+      buttonLabel={personToEdit ? 'Update' : 'Create'}
+      onSave={handleSubmit}
+      isSubmitting={isSubmitting}
+    >
+      <div className="flex w-full flex-col gap-4">
+        <Input isRequired label="Name" className="w-full" value={name} onChange={setName} />
+        <div className="grid grid-cols-2 gap-4">
+          <Select
+            isRequired
+            selectedKey={gender}
+            placeholder="Select Gender"
+            items={GENDERS}
+            label="Gender"
+            onSelectionChange={(k) => setGender(k as string)}
+          >
+            {(item) => (
+              <Select.Item id={item.id} icon={item.icon}>
+                {item.label}
+              </Select.Item>
+            )}
+          </Select>
+          <div className="flex flex-col gap-1.5">
+            <Label isRequired>Birth Date</Label>
+            <DatePicker
+              aria-label="Birth Date"
+              value={birth}
+              onChange={setBirth}
+              className="w-full"
+            />
+          </div>
+        </div>
+      </div>
+    </Form>
+  );
+}

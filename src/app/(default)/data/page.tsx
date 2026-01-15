@@ -6,7 +6,7 @@ import Heading from '@/components/layout/heading';
 import Section from '@/components/layout/section';
 import { NativeSelect } from '@/components/base/select/select-native';
 import { Tabs } from '@/components/application/tabs/tabs';
-import { PeopleTable } from './_components/people-table';
+import { PeopleTable } from './_components/people/people-table';
 import { TeamTable } from './_components/team-table';
 import { PositionTable } from './_components/position-table';
 import * as Modals from "@/components/application/modals/modal";
