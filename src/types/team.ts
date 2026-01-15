@@ -13,6 +13,8 @@ export interface TeamResponse {
 export interface Team {
   id: number;
   name: string;
+  previewImages: string[];
+  memberCount: number;
   created_at: string;
   updated_at: string;
 }

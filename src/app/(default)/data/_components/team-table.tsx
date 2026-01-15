@@ -13,6 +13,7 @@ import { createTeam, getTeams, deleteTeam, updateTeam } from '@/lib/api/teams';
 import useSWR from 'swr';
 import { formatDate } from '@/utils/format';
 import Delete from '@/components/popup/delete';
+import { Avatar } from '@/components/base/avatar/avatar';
 
 export function TeamTable() {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -135,7 +136,30 @@ export function TeamTable() {
                   <Table.Cell className="whitespace-nowrap">{item.name}</Table.Cell>
                   <Table.Cell className="whitespace-nowrap">
                     <div className="flex -space-x-1">
-                      <span className="underline">Show members</span>
+                      {/*<span className="underline">Show members</span>*/}
+                      {item.memberCount > 0
+                        ? item.previewImages
+                            .slice(0, 5)
+                            .map((img, i) => (
+                              <Avatar
+                                className="ring-bg-primary ring-[1.5px]"
+                                size="xs"
+                                src={`${process.env.NEXT_PUBLIC_BASE_API_URL}${img}`}
+                                alt="Olivia Rhye"
+                              />
+                            ))
+                        : 'No members yet'}
+                      {item.memberCount > 5 && (
+                        <Avatar
+                          size="xs"
+                          className="ring-bg-primary ring-[1.5px]"
+                          placeholder={
+                            <span className="text-quaternary text-xs font-semibold">
+                              +{item.memberCount - 5}
+                            </span>
+                          }
+                        />
+                      )}
                     </div>
                   </Table.Cell>
                   <Table.Cell className="whitespace-nowrap">
