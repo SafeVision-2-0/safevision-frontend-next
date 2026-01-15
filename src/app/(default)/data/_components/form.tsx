@@ -6,17 +6,28 @@ import { Button } from '@/components/base/buttons/button';
 interface FormProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onSave: () => void | Promise<void>;
+  buttonLabel?: string;
   title?: string;
   children: React.ReactNode;
+  isSubmitting?: boolean;
 }
 
-export default function Form({ isOpen, onOpenChange, title = 'Add Data', children }: FormProps) {
+export default function Form({
+  isOpen,
+  onOpenChange,
+  onSave,
+  title = 'Add Data',
+  buttonLabel = 'Add',
+  children,
+  isSubmitting = false,
+}: FormProps) {
   const onClose = () => {
     onOpenChange(false);
   };
 
-  const onSave = () => {
-    onOpenChange(false);
+  const handleSave = async () => {
+    await onSave();
   };
 
   return (
@@ -30,10 +41,12 @@ export default function Form({ isOpen, onOpenChange, title = 'Add Data', childre
             </div>
             {children}
             <div className="flex w-full justify-end gap-3">
-              <Button color="secondary" onClick={onClose}>
+              <Button color="secondary" onClick={onClose} isDisabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button onClick={onSave}>Add</Button>
+              <Button onClick={handleSave} isDisabled={isSubmitting}>
+                {buttonLabel}
+              </Button>
             </div>
           </Modals.Dialog>
         </Modals.Modal>

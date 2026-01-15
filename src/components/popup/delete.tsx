@@ -6,17 +6,26 @@ import { Button } from '@/components/base/buttons/button';
 interface DeleteProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onDelete: () => void | Promise<void>;
+  isDeleting?: boolean;
   title?: string;
   desc?: string;
 }
 
-export default function Delete({ isOpen, onOpenChange, title = 'Confirm Deletion', desc = 'Are you sure you want to delete this item? This action cannot be undone.' }: DeleteProps) {
+export default function Delete({
+  isOpen,
+  onOpenChange,
+  title = 'Confirm Deletion',
+  desc = 'Are you sure you want to delete this item? This action cannot be undone.',
+  onDelete,
+  isDeleting = false,
+}: DeleteProps) {
   const onClose = () => {
     onOpenChange(false);
   };
 
-  const onDelete = () => {
-    onOpenChange(false);
+  const handleDelete = async () => {
+    await onDelete();
   };
 
   return (
@@ -28,14 +37,14 @@ export default function Delete({ isOpen, onOpenChange, title = 'Confirm Deletion
               <Heading>{title}</Heading>
               <Close className="cursor-pointer" onClick={onClose} />
             </div>
-            <div className="text-start w-full text-secondary">
-              {desc}
-            </div>
+            <div className="text-secondary w-full text-start">{desc}</div>
             <div className="flex w-full justify-end gap-3">
-              <Button color="secondary" onClick={onClose}>
+              <Button color="secondary" onClick={onClose} isDisabled={isDeleting}>
                 Cancel
               </Button>
-              <Button onClick={onDelete} color="primary-destructive">Delete</Button>
+              <Button onClick={handleDelete} color="primary-destructive" isLoading={isDeleting}>
+                Delete
+              </Button>
             </div>
           </Modals.Dialog>
         </Modals.Modal>
