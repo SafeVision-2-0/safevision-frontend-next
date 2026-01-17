@@ -7,63 +7,54 @@ import { Button } from '@/components/base/buttons/button';
 import { ButtonUtility } from '@/components/base/buttons/button-utility';
 import { PaginationCardMinimal } from '@/components/application/pagination/pagination';
 import { Table, TableCard } from '@/components/application/table/table';
-import Form from './form';
-import { Input } from '@/components/base/input/input';
-import { createPosition, getPositions, deletePosition, updatePosition } from '@/lib/api/positions';
+import { getPositions, deletePosition } from '@/lib/api/positions';
 import useSWR from 'swr';
 import { formatDate } from '@/utils/format';
 import Delete from '@/components/popup/delete';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
+import { PositionFormModal } from './position-form-modal';
 
 export function PositionTable() {
+  // UI States
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
-  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(1);
-  const [positionName, setPositionName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Data States
+  const [selectedPosition, setSelectedPosition] = useState<{ id: string; name: string } | null>(
+    null,
+  );
+  const [page, setPage] = useState<number>(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'status',
     direction: 'ascending',
   });
+
   const itemsPerPage = 10;
 
+  // Fetch Data
   const { data, error, isLoading, mutate } = useSWR(
     ['positions', page, itemsPerPage],
     ([, page, limit]) => getPositions(page, limit),
   );
 
-  const handleSavePosition = async () => {
-    if (!positionName.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      if (isEditMode && selectedPositionId) {
-        await updatePosition(selectedPositionId, positionName);
-      } else {
-        await createPosition(positionName);
-      }
-      await mutate();
-      resetForm();
-    } catch (error) {
-      console.error(`Failed to ${isEditMode ? 'update' : 'create'} position:`, error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  // Handlers
+  const handleFormSuccess = async () => {
+    await mutate();
+    setShowForm(false);
+    setSelectedPosition(null);
   };
 
-  const handleDeletePosition = async () => {
-    if (!selectedPositionId) return;
+  const handleDelete = async () => {
+    if (!selectedPosition) return;
 
     setIsDeleting(true);
     try {
-      await deletePosition(selectedPositionId);
+      await deletePosition(selectedPosition.id);
       await mutate();
       setShowDelete(false);
-      setSelectedPositionId(null);
+      setSelectedPosition(null);
     } catch (error) {
       console.error('Failed to delete position:', error);
     } finally {
@@ -71,28 +62,14 @@ export function PositionTable() {
     }
   };
 
-  const resetForm = () => {
-    setPositionName('');
-    setShowForm(false);
-    setIsEditMode(false);
-    setSelectedPositionId(null);
+  const openEdit = (position: { id: string; name: string }) => {
+    setSelectedPosition(position);
+    setShowForm(true);
   };
 
-  const onDelete = (positionId: string) => {
-    setSelectedPositionId(positionId);
+  const openDelete = (position: { id: string; name: string }) => {
+    setSelectedPosition(position);
     setShowDelete(true);
-  };
-
-  const onEdit = (positionId: string, name: string) => {
-    setSelectedPositionId(positionId);
-    setPositionName(name);
-    setIsEditMode(true);
-    setShowForm(true);
-  };
-
-  const onAdd = () => {
-    resetForm();
-    setShowForm(true);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -105,11 +82,15 @@ export function PositionTable() {
           title="Manage Positions"
           badge={`${data?.meta.total || 0} positions`}
           contentTrailing={
-            <div className="">
-              <Button iconLeading={Plus} onClick={onAdd}>
-                Add Position
-              </Button>
-            </div>
+            <Button
+              iconLeading={Plus}
+              onClick={() => {
+                setSelectedPosition(null);
+                setShowForm(true);
+              }}
+            >
+              Add Position
+            </Button>
           }
         />
         <Table
@@ -142,10 +123,11 @@ export function PositionTable() {
                           <div className="flex -space-x-1">
                             {item.previewImages.slice(0, 5).map((img, i) => (
                               <Avatar
+                                key={i}
                                 className="ring-bg-primary ring-[1.5px]"
                                 size="xs"
                                 src={`${process.env.NEXT_PUBLIC_BASE_API_URL}${img}`}
-                                alt="Olivia Rhye"
+                                alt="Member"
                               />
                             ))}
                             {item.memberCount > 5 && (
@@ -176,14 +158,14 @@ export function PositionTable() {
                         color="tertiary"
                         tooltip="Delete"
                         icon={Trash01}
-                        onClick={() => onDelete(String(item.id))}
+                        onClick={() => openDelete({ id: String(item.id), name: item.name })}
                       />
                       <ButtonUtility
                         size="xs"
                         color="tertiary"
                         tooltip="Edit"
                         icon={Edit01}
-                        onClick={() => onEdit(String(item.id), item.name)}
+                        onClick={() => openEdit({ id: String(item.id), name: item.name })}
                       />
                     </div>
                   </Table.Cell>
@@ -202,34 +184,17 @@ export function PositionTable() {
         />
       </TableCard.Root>
 
-      <Form
+      <PositionFormModal
         isOpen={showForm}
-        onOpenChange={(open) => {
-          setShowForm(open);
-          if (!open) resetForm();
-        }}
-        buttonLabel={isEditMode ? 'Update' : 'Create'}
-        onSave={handleSavePosition}
-        title={isEditMode ? 'Edit Position' : 'Add Position'}
-        isSubmitting={isSubmitting}
-      >
-        <div className="flex w-full flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4">
-            <Input
-              isRequired
-              label="Position Name"
-              className="w-full"
-              value={positionName}
-              onChange={setPositionName}
-            />
-          </div>
-        </div>
-      </Form>
+        onOpenChange={setShowForm}
+        positionToEdit={selectedPosition}
+        onSuccess={handleFormSuccess}
+      />
 
       <Delete
         isOpen={showDelete}
         onOpenChange={setShowDelete}
-        onDelete={handleDeletePosition}
+        onDelete={handleDelete}
         isDeleting={isDeleting}
       />
     </>

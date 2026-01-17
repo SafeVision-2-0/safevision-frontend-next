@@ -7,63 +7,52 @@ import { Button } from '@/components/base/buttons/button';
 import { ButtonUtility } from '@/components/base/buttons/button-utility';
 import { PaginationCardMinimal } from '@/components/application/pagination/pagination';
 import { Table, TableCard } from '@/components/application/table/table';
-import Form from './form';
-import { Input } from '@/components/base/input/input';
-import { createTeam, getTeams, deleteTeam, updateTeam } from '@/lib/api/teams';
+import { getTeams, deleteTeam } from '@/lib/api/teams';
 import useSWR from 'swr';
 import { formatDate } from '@/utils/format';
 import Delete from '@/components/popup/delete';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
+import { TeamFormModal } from './team-form-modal';
 
 export function TeamTable() {
+  // UI States
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(1);
-  const [teamName, setTeamName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Data States
+  const [selectedTeam, setSelectedTeam] = useState<{ id: string; name: string } | null>(null);
+  const [page, setPage] = useState<number>(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'status',
     direction: 'ascending',
   });
+
   const itemsPerPage = 10;
 
+  // Fetch Data
   const { data, error, isLoading, mutate } = useSWR(
     ['teams', page, itemsPerPage],
     ([, page, limit]) => getTeams(page, limit),
   );
 
-  const handleSaveTeam = async () => {
-    if (!teamName.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      if (isEditMode && selectedTeamId) {
-        await updateTeam(selectedTeamId, teamName);
-      } else {
-        await createTeam(teamName);
-      }
-      await mutate();
-      resetForm();
-    } catch (error) {
-      console.error(`Failed to ${isEditMode ? 'update' : 'create'} team:`, error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  // Handlers
+  const handleFormSuccess = async () => {
+    await mutate();
+    setShowForm(false);
+    setSelectedTeam(null);
   };
 
-  const handleDeleteTeam = async () => {
-    if (!selectedTeamId) return;
+  const handleDelete = async () => {
+    if (!selectedTeam) return;
 
     setIsDeleting(true);
     try {
-      await deleteTeam(selectedTeamId);
+      await deleteTeam(selectedTeam.id);
       await mutate();
       setShowDelete(false);
-      setSelectedTeamId(null);
+      setSelectedTeam(null);
     } catch (error) {
       console.error('Failed to delete team:', error);
     } finally {
@@ -71,28 +60,14 @@ export function TeamTable() {
     }
   };
 
-  const resetForm = () => {
-    setTeamName('');
-    setShowForm(false);
-    setIsEditMode(false);
-    setSelectedTeamId(null);
+  const openEdit = (team: { id: string; name: string }) => {
+    setSelectedTeam(team);
+    setShowForm(true);
   };
 
-  const onDelete = (teamId: string) => {
-    setSelectedTeamId(teamId);
+  const openDelete = (team: { id: string; name: string }) => {
+    setSelectedTeam(team);
     setShowDelete(true);
-  };
-
-  const onEdit = (teamId: string, teamName: string) => {
-    setSelectedTeamId(teamId);
-    setTeamName(teamName);
-    setIsEditMode(true);
-    setShowForm(true);
-  };
-
-  const onAdd = () => {
-    resetForm();
-    setShowForm(true);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -105,11 +80,15 @@ export function TeamTable() {
           title="Manage Teams"
           badge={`${data?.meta.total || 0} teams`}
           contentTrailing={
-            <div className="">
-              <Button iconLeading={Plus} onClick={onAdd}>
-                Add Team
-              </Button>
-            </div>
+            <Button
+              iconLeading={Plus}
+              onClick={() => {
+                setSelectedTeam(null);
+                setShowForm(true);
+              }}
+            >
+              Add Team
+            </Button>
           }
         />
         <Table
@@ -142,10 +121,11 @@ export function TeamTable() {
                           <div className="flex -space-x-1">
                             {item.previewImages.slice(0, 5).map((img, i) => (
                               <Avatar
+                                key={i}
                                 className="ring-bg-primary ring-[1.5px]"
                                 size="xs"
                                 src={`${process.env.NEXT_PUBLIC_BASE_API_URL}${img}`}
-                                alt="Olivia Rhye"
+                                alt="Member"
                               />
                             ))}
                             {item.memberCount > 5 && (
@@ -176,14 +156,14 @@ export function TeamTable() {
                         color="tertiary"
                         tooltip="Delete"
                         icon={Trash01}
-                        onClick={() => onDelete(String(item.id))}
+                        onClick={() => openDelete({ id: String(item.id), name: item.name })}
                       />
                       <ButtonUtility
                         size="xs"
                         color="tertiary"
                         tooltip="Edit"
                         icon={Edit01}
-                        onClick={() => onEdit(String(item.id), item.name)}
+                        onClick={() => openEdit({ id: String(item.id), name: item.name })}
                       />
                     </div>
                   </Table.Cell>
@@ -202,34 +182,17 @@ export function TeamTable() {
         />
       </TableCard.Root>
 
-      <Form
+      <TeamFormModal
         isOpen={showForm}
-        onOpenChange={(open) => {
-          setShowForm(open);
-          if (!open) resetForm();
-        }}
-        buttonLabel={isEditMode ? 'Update' : 'Create'}
-        onSave={handleSaveTeam}
-        title={isEditMode ? 'Edit Team' : 'Add Team'}
-        isSubmitting={isSubmitting}
-      >
-        <div className="flex w-full flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4">
-            <Input
-              isRequired
-              label="Team Name"
-              className="w-full"
-              value={teamName}
-              onChange={setTeamName}
-            />
-          </div>
-        </div>
-      </Form>
+        onOpenChange={setShowForm}
+        teamToEdit={selectedTeam}
+        onSuccess={handleFormSuccess}
+      />
 
       <Delete
         isOpen={showDelete}
         onOpenChange={setShowDelete}
-        onDelete={handleDeleteTeam}
+        onDelete={handleDelete}
         isDeleting={isDeleting}
       />
     </>
