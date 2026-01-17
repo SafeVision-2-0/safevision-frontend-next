@@ -67,13 +67,14 @@ export function PersonAssignmentModal({
     <Form
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      title="Assign Image and Group"
+      showCloseButton={false}
+      title="Assign Images & Groups"
       buttonLabel="Done"
       showSecondaryButton={false}
       onSave={onFinish}
       isSubmitting={isBusy}
     >
-      <div className="mb-4 flex flex-col gap-2 w-full">
+      <div className="mb-4 flex w-full flex-col gap-2">
         <Label>Profile Image</Label>
         <PersonImageUpload
           personId={personId}

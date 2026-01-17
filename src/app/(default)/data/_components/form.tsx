@@ -7,6 +7,7 @@ interface FormProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onSave: () => void | Promise<void>;
+  showCloseButton?: boolean;
   buttonLabel?: string;
   secondaryButtonLabel?: string;
   showSecondaryButton?: boolean;
@@ -19,6 +20,7 @@ export default function Form({
   isOpen,
   onOpenChange,
   onSave,
+  showCloseButton = true,
   title = 'Add Data',
   buttonLabel = 'Add',
   secondaryButtonLabel = 'Cancel',
@@ -41,7 +43,7 @@ export default function Form({
           <Modals.Dialog className="mx-auto flex max-w-120 flex-col gap-6 rounded-2xl bg-zinc-50 p-8 dark:bg-black">
             <div className="mb-4 flex w-full items-center justify-between" aria-hidden="true">
               <Heading>{title}</Heading>
-              <Close className="cursor-pointer" onClick={onClose} />
+              <Close className={`cursor-pointer ${!showCloseButton && 'hidden'}`} onClick={onClose} />
             </div>
             {children}
             <div className="flex w-full justify-end gap-3">

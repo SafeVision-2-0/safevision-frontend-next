@@ -17,6 +17,7 @@ import { getTeams } from '@/lib/api/teams';
 import { formatDate } from '@/utils/format';
 import { PersonBioModal } from './person-bio-modal';
 import { PersonAssignmentModal } from './person-assignment-modal';
+import { ImageUp } from 'lucide-react';
 
 export function PeopleTable() {
   // UI States
@@ -78,6 +79,11 @@ export function PeopleTable() {
     setSelectedPerson(person);
     setShowBioForm(true);
   };
+
+  const openAssign = (person: any) => {
+    setSelectedPerson(person);
+    setShowAssignForm(true);
+  }
 
   const openDelete = (person: any) => {
     setSelectedPerson(person);
@@ -166,9 +172,16 @@ export function PeopleTable() {
                     <ButtonUtility
                       size="xs"
                       color="tertiary"
-                      tooltip="Edit"
+                      tooltip="Edit Biodata"
                       icon={Edit01}
                       onClick={() => openEdit(item)}
+                    />
+                    <ButtonUtility
+                      size="xs"
+                      color="tertiary"
+                      tooltip="Assign Image, Positions, and Teams"
+                      icon={ImageUp}
+                      onClick={() => openAssign(item)}
                     />
                   </div>
                 </Table.Cell>

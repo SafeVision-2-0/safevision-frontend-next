@@ -37,9 +37,20 @@ export function PersonBioModal({
       if (personToEdit) {
         setName(personToEdit.name);
         setGender(personToEdit.gender);
+        console.log(personToEdit);
         try {
-          if (personToEdit.birth) setBirth(parseDate(personToEdit.birth));
-        } catch {}
+          if (personToEdit.birth) {
+            const raw = personToEdit.birth;
+            const dateStr =
+              typeof raw === 'string'
+                ? raw.slice(0, 10) // "2026-01-01T...Z" -> "2026-01-01"
+                : new Date(raw).toISOString().slice(0, 10);
+            setBirth(parseDate(dateStr));
+          }
+          console.log(personToEdit);
+        } catch (e) {
+          console.error(e);
+        }
       } else {
         // Reset for create mode
         setName('');
@@ -85,6 +96,7 @@ export function PersonBioModal({
       isSubmitting={isSubmitting}
     >
       <div className="flex w-full flex-col gap-4">
+        { String(birth) }
         <Input isRequired label="Name" className="w-full" value={name} onChange={setName} />
         <div className="grid grid-cols-2 gap-4">
           <Select

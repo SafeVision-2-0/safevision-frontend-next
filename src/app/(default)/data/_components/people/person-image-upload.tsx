@@ -38,8 +38,8 @@ export function PersonImageUpload({
     setIsLoading(true);
     try {
       const response = await getImagesByPerson(personId);
-      const sortedImages = (response.data || []).sort((a: any, b: any) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      const sortedImages = (response.data || []).sort(
+        (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
       setImages(sortedImages);
     } catch (err) {
@@ -51,7 +51,7 @@ export function PersonImageUpload({
 
   const toggleShowAllImages = () => {
     setShowAllImages(!showAllImages);
-  }
+  };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -95,7 +95,7 @@ export function PersonImageUpload({
   const onRemoveImage = (id: string) => {
     setSelectedImageId(id);
     setShowDelete(true);
-  }
+  };
 
   const handleRemove = async () => {
     if (isDeleting) return;
@@ -136,7 +136,7 @@ export function PersonImageUpload({
             </button>
           </div>
           <div className="mt-3 grid grid-cols-4 gap-3">
-            {(showAllImages ? images.slice(1) : images.slice(1, 4)).map((img) => (
+            {(showAllImages ? images.slice(1) : images.slice(1, images.length > 4 ? 3 : 4)).map((img) => (
               <div className="relative aspect-4/3 max-h-full w-full rounded-lg">
                 <img
                   key={img.id}
@@ -158,24 +158,22 @@ export function PersonImageUpload({
                 onClick={toggleShowAllImages}
               >
                 <div className="flex flex-col items-center justify-center gap-2 text-gray-500">
-                  +{images.length - 4}
+                  +{images.length - 3}
                 </div>
               </label>
             )}
-            {(showAllImages || images.length <= 4) && (
-              <label className="flex aspect-4/3 w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-700 hover:bg-white/10">
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <Plus className="h-8 w-8 text-gray-400" />
-                </div>
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  disabled={isUploading}
-                />
-              </label>
-            )}
+            <label className="flex aspect-4/3 w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-700 hover:bg-white/10">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <Plus className="h-8 w-8 text-gray-400" />
+              </div>
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageChange}
+                disabled={isUploading}
+              />
+            </label>
           </div>
         </div>
       ) : (
