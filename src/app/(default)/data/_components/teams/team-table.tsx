@@ -14,10 +14,12 @@ import Delete from '@/components/popup/delete';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { TeamFormModal } from './team-form-modal';
+import MemberListModal from '@/app/(default)/data/_components/member-list-modal';
 
 export function TeamTable() {
   // UI States
   const [showForm, setShowForm] = useState<boolean>(false);
+  const [showMemberList, setShowMemberList] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -70,6 +72,11 @@ export function TeamTable() {
     setShowDelete(true);
   };
 
+  const openMemberList = (team: { id: string; name: string }) => {
+    setSelectedTeam(team);
+    setShowMemberList(true);
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Failed to load</div>;
 
@@ -117,7 +124,12 @@ export function TeamTable() {
                   <Table.Cell className="whitespace-nowrap">
                     {item.memberCount > 0 ? (
                       <Tooltip title="Show members">
-                        <TooltipTrigger className="cursor-pointer">
+                        <TooltipTrigger
+                          className="cursor-pointer"
+                          onClick={() => {
+                            openMemberList({ id: String(item.id), name: item.name });
+                          }}
+                        >
                           <div className="flex -space-x-1">
                             {item.previewImages.slice(0, 5).map((img, i) => (
                               <Avatar
@@ -125,6 +137,19 @@ export function TeamTable() {
                                 className="ring-bg-primary ring-[1.5px]"
                                 size="xs"
                                 src={`${process.env.NEXT_PUBLIC_BASE_API_URL}${img}`}
+                                alt="Member"
+                              />
+                            ))}
+                            {[
+                              ...Array(
+                                (item.memberCount > 5 ? 5 : item.memberCount) -
+                                  item.previewImages.length,
+                              ),
+                            ].map((img, i) => (
+                              <Avatar
+                                key={i}
+                                className="ring-bg-primary ring-[1.5px]"
+                                size="xs"
                                 alt="Member"
                               />
                             ))}
@@ -187,6 +212,14 @@ export function TeamTable() {
         onOpenChange={setShowForm}
         teamToEdit={selectedTeam}
         onSuccess={handleFormSuccess}
+      />
+
+      <MemberListModal
+        isOpen={showMemberList}
+        onOpenChange={setShowMemberList}
+        group={selectedTeam!}
+        onGroupChange={setSelectedTeam}
+        groupType="team"
       />
 
       <Delete

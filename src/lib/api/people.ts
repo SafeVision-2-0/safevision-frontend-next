@@ -1,9 +1,17 @@
 import { Person, PersonResponse } from '@/types/person';
 
-export async function getPeople(page: number = 1, limit: number = 10): Promise<PersonResponse> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/person?page=${page}&limit=${limit}`, {
-    cache: 'no-store',
-  });
+export async function getPeople(
+  page: number = 1,
+  limit: number = 10,
+  positionId: number | undefined = undefined,
+  teamId: number | undefined = undefined,
+): Promise<PersonResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/person?page=${page}&limit=${limit}${positionId ? `&positionId=${positionId}` : ''}${teamId ? `&teamId=${teamId}` : ''}`,
+    {
+      cache: 'no-store',
+    },
+  );
 
   if (!res.ok) {
     throw new Error('Failed to fetch people');

@@ -96,7 +96,6 @@ export function PersonBioModal({
       isSubmitting={isSubmitting}
     >
       <div className="flex w-full flex-col gap-4">
-        { String(birth) }
         <Input isRequired label="Name" className="w-full" value={name} onChange={setName} />
         <div className="grid grid-cols-2 gap-4">
           <Select
