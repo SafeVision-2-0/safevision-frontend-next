@@ -1,37 +1,31 @@
 'use client';
 
-import type { Metadata, Viewport } from 'next';
 import type { FC } from 'react';
-import {
-  HomeLine,
-  VideoRecorder,
-  Image01,
-  UserPlus01
-} from '@untitledui/icons';
 import type { NavItemType } from '@/components/application/app-navigation/config';
 import { SidebarNavigationSlim } from '@/components/application/app-navigation/sidebar-navigation/sidebar-slim';
 import { usePathname } from 'next/navigation';
+import { House, Video, Image, Database } from 'lucide-react';
 
 const navItems: (NavItemType & { icon: FC<{ className?: string }> })[] = [
   {
     label: 'Home',
     href: '/',
-    icon: HomeLine,
+    icon: House,
   },
   {
     label: 'Live Camera',
     href: '/camera',
-    icon: VideoRecorder,
+    icon: Video,
   },
   {
     label: 'Captured',
     href: '/captured',
-    icon: Image01,
+    icon: Image,
   },
   {
-    label: 'People',
-    href: '/people',
-    icon: UserPlus01,
+    label: 'Manage Data',
+    href: '/data',
+    icon: Database,
   },
 ];
 

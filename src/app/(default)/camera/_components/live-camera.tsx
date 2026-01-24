@@ -199,27 +199,27 @@ export function LiveCamera() {
       <div className="flex-1">
         <Heading className="mb-4">Live Camera</Heading>
 
-        <div className="flex w-full items-center justify-between">
-          <Select
-              isRequired
-              selectedKey={selectedKey}
-              placeholder="Select team member"
-              items={cameraItems}
-              className="w-64"
-              onSelectionChange={(key) => setSelectedKey(key as string)}
-          >
-            {(item) => (
-                <Select.Item
-                    id={item.id}
-                    supportingText={item.supportingText}
-                    isDisabled={item.isDisabled}
-                    icon={item.icon}
-                    avatarUrl={item.avatarUrl}
-                >
-                  {item.label}
-                </Select.Item>
-            )}
-          </Select>
+      <div className="flex w-full items-center justify-between">
+        <Select
+          isRequired
+          selectedKey={selectedKey}
+          placeholder="Select team member"
+          items={cameraItems}
+          className="w-64"
+          onSelectionChange={(key) => setSelectedKey(key as string)}
+        >
+          {(item) => (
+            <Select.Item
+              id={item.id}
+              supportingText={item.supportingText}
+              isDisabled={item.isDisabled}
+              icon={item.icon}
+              avatarUrl={item.avatarUrl}
+            >
+              {item.label}
+            </Select.Item>
+          )}
+        </Select>
 
           <span className="text-2xl">03.01:00 PM</span>
         </div>
