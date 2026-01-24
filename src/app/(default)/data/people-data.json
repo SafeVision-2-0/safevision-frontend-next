@@ -1,0 +1,140 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Olivia Rhye",
+      "gender": "Female",
+      "birth": "1990-05-15",
+      "position": [{ "name": "AI/ML" }, { "name": "Backend Engineer" }],
+      "team": [{ "name": "Team Orion" }],
+      "avatarUrl": "https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80&w=100"
+    },
+    {
+      "id": 2,
+      "name": "Ethan Walker",
+      "gender": "Male",
+      "birth": "1988-11-02",
+      "position": [{ "name": "Frontend Engineer" }],
+      "team": [{ "name": "Team Gemini" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Sophia Martinez",
+      "gender": "Female",
+      "birth": "1994-03-21",
+      "position": [{ "name": "UI/UX Designer" }],
+      "team": [{ "name": "Team Athena" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/45.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Liam Johnson",
+      "gender": "Male",
+      "birth": "1991-07-09",
+      "position": [{ "name": "Backend Engineer" }],
+      "team": [{ "name": "Team Orion" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/12.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Ava Thompson",
+      "gender": "Female",
+      "birth": "1993-01-30",
+      "position": [{ "name": "QA Engineer" }],
+      "team": [{ "name": "Team Gemini" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/18.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Noah Anderson",
+      "gender": "Male",
+      "birth": "1987-09-17",
+      "position": [{ "name": "DevOps Engineer" }],
+      "team": [{ "name": "Team Athena" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/41.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Isabella Lee",
+      "gender": "Female",
+      "birth": "1995-06-11",
+      "position": [{ "name": "Data Analyst" }],
+      "team": [{ "name": "Team Orion" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/27.jpg"
+    },
+    {
+      "id": 8,
+      "name": "James Brown",
+      "gender": "Male",
+      "birth": "1989-12-05",
+      "position": [{ "name": "System Analyst" }],
+      "team": [{ "name": "Team Gemini" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/55.jpg"
+    },
+    {
+      "id": 9,
+      "name": "Mia Wilson",
+      "gender": "Female",
+      "birth": "1992-04-19",
+      "position": [{ "name": "Product Manager" }],
+      "team": [{ "name": "Team Athena" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/60.jpg"
+    },
+    {
+      "id": 10,
+      "name": "Benjamin Clark",
+      "gender": "Male",
+      "birth": "1986-10-23",
+      "position": [{ "name": "Project Manager" }],
+      "team": [{ "name": "Team Orion" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/67.jpg"
+    },
+    {
+      "id": 11,
+      "name": "Charlotte Lewis",
+      "gender": "Female",
+      "birth": "1991-02-14",
+      "position": [{ "name": "Frontend Engineer" }],
+      "team": [{ "name": "Team Gemini" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/72.jpg"
+    },
+    {
+      "id": 12,
+      "name": "Daniel Harris",
+      "gender": "Male",
+      "birth": "1988-08-08",
+      "position": [{ "name": "Security Engineer" }],
+      "team": [{ "name": "Team Athena" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/78.jpg"
+    },
+    {
+      "id": 13,
+      "name": "Amelia Young",
+      "gender": "Female",
+      "birth": "1996-09-27",
+      "position": [{ "name": "AI/ML" }],
+      "team": [{ "name": "Team Orion" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/83.jpg"
+    },
+    {
+      "id": 14,
+      "name": "Henry King",
+      "gender": "Male",
+      "birth": "1985-05-03",
+      "position": [{ "name": "Backend Engineer" }],
+      "team": [{ "name": "Team Gemini" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/men/90.jpg"
+    },
+    {
+      "id": 15,
+      "name": "Emily Scott",
+      "gender": "Female",
+      "birth": "1993-11-12",
+      "position": [{ "name": "UI/UX Designer" }],
+      "team": [{ "name": "Team Athena" }],
+      "avatarUrl": "https://randomuser.me/api/portraits/women/95.jpg"
+    }
+  ],
+  "total": 15
+}

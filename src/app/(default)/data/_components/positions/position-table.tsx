@@ -1,0 +1,202 @@
+'use client';
+
+import React, { useState } from 'react';
+import { SortDescriptor } from 'react-aria-components';
+import { Edit01, Plus, Trash01 } from '@untitledui/icons';
+import { Button } from '@/components/base/buttons/button';
+import { ButtonUtility } from '@/components/base/buttons/button-utility';
+import { PaginationCardMinimal } from '@/components/application/pagination/pagination';
+import { Table, TableCard } from '@/components/application/table/table';
+import { getPositions, deletePosition } from '@/lib/api/positions';
+import useSWR from 'swr';
+import { formatDate } from '@/utils/format';
+import Delete from '@/components/popup/delete';
+import { Avatar } from '@/components/base/avatar/avatar';
+import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
+import { PositionFormModal } from './position-form-modal';
+
+export function PositionTable() {
+  // UI States
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Data States
+  const [selectedPosition, setSelectedPosition] = useState<{ id: string; name: string } | null>(
+    null,
+  );
+  const [page, setPage] = useState<number>(1);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'status',
+    direction: 'ascending',
+  });
+
+  const itemsPerPage = 10;
+
+  // Fetch Data
+  const { data, error, isLoading, mutate } = useSWR(
+    ['positions', page, itemsPerPage],
+    ([, page, limit]) => getPositions(page, limit),
+  );
+
+  // Handlers
+  const handleFormSuccess = async () => {
+    await mutate();
+    setShowForm(false);
+    setSelectedPosition(null);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedPosition) return;
+
+    setIsDeleting(true);
+    try {
+      await deletePosition(selectedPosition.id);
+      await mutate();
+      setShowDelete(false);
+      setSelectedPosition(null);
+    } catch (error) {
+      console.error('Failed to delete position:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const openEdit = (position: { id: string; name: string }) => {
+    setSelectedPosition(position);
+    setShowForm(true);
+  };
+
+  const openDelete = (position: { id: string; name: string }) => {
+    setSelectedPosition(position);
+    setShowDelete(true);
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Failed to load</div>;
+
+  return (
+    <>
+      <TableCard.Root size="sm">
+        <TableCard.Header
+          title="Manage Positions"
+          badge={`${data?.meta.total || 0} positions`}
+          contentTrailing={
+            <Button
+              iconLeading={Plus}
+              onClick={() => {
+                setSelectedPosition(null);
+                setShowForm(true);
+              }}
+            >
+              Add Position
+            </Button>
+          }
+        />
+        <Table
+          aria-label="Positions"
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}
+        >
+          <Table.Header>
+            <Table.Head
+              id="name"
+              label="Name"
+              isRowHeader
+              allowsSorting
+              className="w-full max-w-1/4"
+            />
+            <Table.Head id="members" label="Members" allowsSorting />
+            <Table.Head id="created" label="Created At" allowsSorting />
+            <Table.Head id="actions" />
+          </Table.Header>
+
+          {data && (
+            <Table.Body items={data.data}>
+              {(item) => (
+                <Table.Row id={item.id}>
+                  <Table.Cell className="whitespace-nowrap">{item.name}</Table.Cell>
+                  <Table.Cell className="whitespace-nowrap">
+                    {item.memberCount > 0 ? (
+                      <Tooltip title="Show members">
+                        <TooltipTrigger className="cursor-pointer">
+                          <div className="flex -space-x-1">
+                            {item.previewImages.slice(0, 5).map((img, i) => (
+                              <Avatar
+                                key={i}
+                                className="ring-bg-primary ring-[1.5px]"
+                                size="xs"
+                                src={`${process.env.NEXT_PUBLIC_BASE_API_URL}${img}`}
+                                alt="Member"
+                              />
+                            ))}
+                            {item.memberCount > 5 && (
+                              <Avatar
+                                size="xs"
+                                className="ring-bg-primary ring-[1.5px]"
+                                placeholder={
+                                  <span className="text-quaternary text-xs font-semibold">
+                                    +{item.memberCount - 5}
+                                  </span>
+                                }
+                              />
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                      </Tooltip>
+                    ) : (
+                      'No members yet'
+                    )}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap">
+                    {formatDate(item.created_at)}
+                  </Table.Cell>
+                  <Table.Cell className="px-3">
+                    <div className="flex justify-end gap-0.5">
+                      <ButtonUtility
+                        size="xs"
+                        color="tertiary"
+                        tooltip="Delete"
+                        icon={Trash01}
+                        onClick={() => openDelete({ id: String(item.id), name: item.name })}
+                      />
+                      <ButtonUtility
+                        size="xs"
+                        color="tertiary"
+                        tooltip="Edit"
+                        icon={Edit01}
+                        onClick={() => openEdit({ id: String(item.id), name: item.name })}
+                      />
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
+              )}
+            </Table.Body>
+          )}
+        </Table>
+
+        <PaginationCardMinimal
+          align="right"
+          page={page}
+          total={data?.meta.totalPages}
+          onPageChange={setPage}
+          className="px-4 py-3 md:px-5 md:pt-3 md:pb-4"
+        />
+      </TableCard.Root>
+
+      <PositionFormModal
+        isOpen={showForm}
+        onOpenChange={setShowForm}
+        positionToEdit={selectedPosition}
+        onSuccess={handleFormSuccess}
+      />
+
+      <Delete
+        isOpen={showDelete}
+        onOpenChange={setShowDelete}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
+      />
+    </>
+  );
+}

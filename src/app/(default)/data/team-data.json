@@ -1,0 +1,65 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Team Orion",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/18.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/12.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/41.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/55.jpg" }
+      ],
+      "totalMembers": 8,
+      "createdAt": "2023-01-12"
+    },
+    {
+      "id": 2,
+      "name": "Team Gemini",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/45.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/67.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/18.jpg" }
+      ],
+      "totalMembers": 3,
+      "createdAt": "2023-02-03"
+    },
+    {
+      "id": 3,
+      "name": "Team Athena",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/60.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/72.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/78.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/90.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/83.jpg" }
+      ],
+      "totalMembers": 12,
+      "createdAt": "2022-11-21"
+    },
+    {
+      "id": 4,
+      "name": "Team Phoenix",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/14.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/25.jpg" }
+      ],
+      "totalMembers": 2,
+      "createdAt": "2024-04-10"
+    },
+    {
+      "id": 5,
+      "name": "Team Nova",
+      "members": [
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/9.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/31.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/44.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/men/53.jpg" },
+        { "avatarUrl": "https://randomuser.me/api/portraits/women/66.jpg" }
+      ],
+      "totalMembers": 7,
+      "createdAt": "2023-09-08"
+    }
+  ],
+  "total": 5
+}
