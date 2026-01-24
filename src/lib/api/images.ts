@@ -11,6 +11,10 @@ export async function uploadImage(
     body: formData,
   });
 
+  fetch(`${process.env.NEXT_PUBLIC_BASE_AI_URL}/face-embedding/run`, {
+    method: 'POST',
+  });
+
   return res.json();
 }
 

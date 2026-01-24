@@ -43,7 +43,9 @@ export function LiveCamera() {
     startCamera();
 
     // Connect to WebSocket
-    const ws = new WebSocket('ws://10.200.115.20:8000/ws/face-recognition');
+    const ws = new WebSocket(
+      `${process.env.NEXT_PUBLIC_BASE_WEBSOCKET}/ws/face-recognition/vggface2`,
+    );
     wsRef.current = ws;
 
     ws.onopen = () => {
