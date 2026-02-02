@@ -12,6 +12,7 @@ import { DateRangePicker } from '@/components/application/date-picker/date-range
 import * as Paginations from '@/components/application/pagination/pagination';
 import * as Modals from '@/components/application/modals/modal';
 import { Avatar } from '@/components/base/avatar/avatar';
+import CapturedDetails from '@/components/custom/capturedDetails';
 
 export default function Captured() {
   const people = [
@@ -85,75 +86,77 @@ export default function Captured() {
           onPageChange={setCurrentPage}
         />
 
-        <Modals.DialogTrigger isOpen={isDescOpen} onOpenChange={setIsDescOpen}>
-          <Modals.ModalOverlay>
-            <Modals.Modal>
-              <Modals.Dialog className="mx-auto grid max-w-225 grid-cols-1 gap-4 rounded-2xl bg-zinc-50 p-8 lg:grid-cols-3 lg:gap-10 dark:bg-black">
-                <div className="mb-4 flex items-center justify-between lg:hidden" aria-hidden="true">
-                  <Heading>Details</Heading>
-                  <Close className="cursor-pointer" onClick={() => setIsDescOpen(false)} />
-                </div>
-                <div className={'lg:col-span-2'}>
-                  <img
-                    src="https://picsum.photos/id/180/300/200"
-                    className="aspect-video w-full rounded-lg object-cover"
-                    alt="Ikram"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <div className="mb-4 lg:flex items-center justify-between hidden" aria-hidden="true">
-                    <Heading>Details</Heading>
-                    <Close className="cursor-pointer" onClick={() => setIsDescOpen(false)} />
-                  </div>
-                  <div className="mt-4 flex items-center">
-                    <Avatar
-                      size="xl"
-                      alt="Olivia Rhye"
-                      src="https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80"
-                      className="shrink-0"
-                    />
-                    <span className="ml-4 flex-1 truncate">Olivia Rhye</span>
-                  </div>
+        <CapturedDetails isDescOpen={isDescOpen} setIsDescOpen={setIsDescOpen} />
 
-                  <div className="mt-4 flex flex-col gap-0.5 text-sm">
-                    <h2 className="text-gray-500">Spotted</h2>
-                    <span className="flex items-center gap-2">
-                      <Clock width={15} />
-                      <span>12.30:50 AM</span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <Calendar width={15} />
-                      <span>January 30, 2025</span>
-                    </span>
-                  </div>
+        {/*<Modals.DialogTrigger isOpen={isDescOpen} onOpenChange={setIsDescOpen}>*/}
+        {/*  <Modals.ModalOverlay>*/}
+        {/*    <Modals.Modal>*/}
+        {/*      <Modals.Dialog className="mx-auto grid max-w-225 grid-cols-1 gap-4 rounded-2xl bg-zinc-50 p-8 lg:grid-cols-3 lg:gap-10 dark:bg-black">*/}
+        {/*        <div className="mb-4 flex items-center justify-between lg:hidden" aria-hidden="true">*/}
+        {/*          <Heading>Details</Heading>*/}
+        {/*          <Close className="cursor-pointer" onClick={() => setIsDescOpen(false)} />*/}
+        {/*        </div>*/}
+        {/*        <div className={'lg:col-span-2'}>*/}
+        {/*          <img*/}
+        {/*            src="https://picsum.photos/id/180/300/200"*/}
+        {/*            className="aspect-video w-full rounded-lg object-cover"*/}
+        {/*            alt="Ikram"*/}
+        {/*          />*/}
+        {/*        </div>*/}
+        {/*        <div className="flex flex-col">*/}
+        {/*          <div className="mb-4 lg:flex items-center justify-between hidden" aria-hidden="true">*/}
+        {/*            <Heading>Details</Heading>*/}
+        {/*            <Close className="cursor-pointer" onClick={() => setIsDescOpen(false)} />*/}
+        {/*          </div>*/}
+        {/*          <div className="mt-4 flex items-center">*/}
+        {/*            <Avatar*/}
+        {/*              size="xl"*/}
+        {/*              alt="Olivia Rhye"*/}
+        {/*              src="https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80"*/}
+        {/*              className="shrink-0"*/}
+        {/*            />*/}
+        {/*            <span className="ml-4 flex-1 truncate">Olivia Rhye</span>*/}
+        {/*          </div>*/}
 
-                  <div className="mt-4 flex flex-col gap-0.5 text-sm">
-                    <h2 className="text-gray-500">Information</h2>
-                    <span className="flex items-center gap-2">
-                      <Mars width={15} />
-                      <span>Male</span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <Cake width={15} />
-                      <span>January 30, 2003</span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <Users width={15} />
-                      <span>Team Orion</span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <IdCard width={15} />
-                      <span>AI/ML Engineer</span>
-                    </span>
-                  </div>
+        {/*          <div className="mt-4 flex flex-col gap-0.5 text-sm">*/}
+        {/*            <h2 className="text-gray-500">Spotted</h2>*/}
+        {/*            <span className="flex items-center gap-2">*/}
+        {/*              <Clock width={15} />*/}
+        {/*              <span>12.30:50 AM</span>*/}
+        {/*            </span>*/}
+        {/*            <span className="flex items-center gap-2">*/}
+        {/*              <Calendar width={15} />*/}
+        {/*              <span>January 30, 2025</span>*/}
+        {/*            </span>*/}
+        {/*          </div>*/}
 
-                  {/*<p>Modal content goes here</p>*/}
-                  {/*<Button onPress={() => setIsDescOpen(false)}>Close</Button>*/}
-                </div>
-              </Modals.Dialog>
-            </Modals.Modal>
-          </Modals.ModalOverlay>
-        </Modals.DialogTrigger>
+        {/*          <div className="mt-4 flex flex-col gap-0.5 text-sm">*/}
+        {/*            <h2 className="text-gray-500">Information</h2>*/}
+        {/*            <span className="flex items-center gap-2">*/}
+        {/*              <Mars width={15} />*/}
+        {/*              <span>Male</span>*/}
+        {/*            </span>*/}
+        {/*            <span className="flex items-center gap-2">*/}
+        {/*              <Cake width={15} />*/}
+        {/*              <span>January 30, 2003</span>*/}
+        {/*            </span>*/}
+        {/*            <span className="flex items-center gap-2">*/}
+        {/*              <Users width={15} />*/}
+        {/*              <span>Team Orion</span>*/}
+        {/*            </span>*/}
+        {/*            <span className="flex items-center gap-2">*/}
+        {/*              <IdCard width={15} />*/}
+        {/*              <span>AI/ML Engineer</span>*/}
+        {/*            </span>*/}
+        {/*          </div>*/}
+
+        {/*          /!*<p>Modal content goes here</p>*!/*/}
+        {/*          /!*<Button onPress={() => setIsDescOpen(false)}>Close</Button>*!/*/}
+        {/*        </div>*/}
+        {/*      </Modals.Dialog>*/}
+        {/*    </Modals.Modal>*/}
+        {/*  </Modals.ModalOverlay>*/}
+        {/*</Modals.DialogTrigger>*/}
       </div>
     </Section>
   );

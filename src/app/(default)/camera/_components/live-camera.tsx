@@ -5,11 +5,6 @@ import Heading from '@/components/layout/heading';
 import { Select } from '@/components/base/select/select';
 import { createHistory } from '@/lib/api/history';
 
-const cameraItems = [
-  { label: 'ASUS FHD Camera', id: '1' },
-  { label: 'OBS Virtual Camera', id: '2' },
-];
-
 type Detection = {
   track_id: number;
   name: string;
@@ -36,6 +31,16 @@ const CAPTURE_CONFIG = {
 export function LiveCamera() {
   const [selectedKey, setSelectedKey] = useState<string>('1');
   const [detections, setDetections] = useState<Detection[]>([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+  const [cameras, setCameras] = useState<{ label: string; id: string }[]>([]);
+  const [cameraStats, setCameraStats] = useState({
+    label: '',
+    deviceId: '',
+    width: 0,
+    height: 0,
+    frameRate: 0,
+  });
+  const [currentTime, setCurrentTime] = useState('');
   const captureStateRef = useRef<Map<number, CaptureState>>(new Map());
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -44,23 +49,92 @@ export function LiveCamera() {
   const wsRef = useRef<WebSocket | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // 1. Clock Effect
   useEffect(() => {
-    async function startCamera() {
+    const updateTime = () => {
+      // Formats as 03:01:00 PM
+      setCurrentTime(
+        new Date().toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        }),
+      );
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 2. Camera Initialization & Switching Effect
+  useEffect(() => {
+    let mounted = true;
+
+    async function setupCamera() {
       try {
+        // Stop existing tracks to release hardware
+        if (videoRef.current?.srcObject) {
+          const stream = videoRef.current.srcObject as MediaStream;
+          stream.getTracks().forEach((track) => track.stop());
+        }
+
+        // verify permission and get stream
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: selectedDeviceId ? { deviceId: { exact: selectedDeviceId } } : true,
         });
+
+        if (!mounted) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+        }
+
+        // Get actual running settings
+        const videoTrack = stream.getVideoTracks()[0];
+        const settings = videoTrack.getSettings();
+
+        setCameraStats({
+          label: videoTrack.label || 'Unknown Camera',
+          deviceId: settings.deviceId || '',
+          width: settings.width || 0,
+          height: settings.height || 0,
+          frameRate: settings.frameRate || 0,
+        });
+
+        // Enumerate devices for the dropdown
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoInputs = devices
+          .filter((d) => d.kind === 'videoinput')
+          .map((d) => ({
+            label: d.label || `Camera ${d.deviceId.slice(0, 5)}...`,
+            id: d.deviceId,
+          }));
+
+        setCameras(videoInputs);
+
+        // Set initial selection if not set
+        if (!selectedDeviceId && settings.deviceId) {
+          setSelectedDeviceId(settings.deviceId);
         }
       } catch (error) {
         console.error('Error accessing camera:', error);
       }
     }
 
-    startCamera();
+    setupCamera();
 
+    return () => {
+      mounted = false;
+      // Cleanup of tracks happens at start of next run or component unmount
+    };
+  }, [selectedDeviceId]);
+
+  // 3. WebSocket Effect (Logic specifically for WS connection)
+  useEffect(() => {
     const ws = new WebSocket(
       `${process.env.NEXT_PUBLIC_BASE_WEBSOCKET}/ws/face-recognition/vggface2`,
     );
@@ -68,7 +142,6 @@ export function LiveCamera() {
 
     ws.onopen = () => {
       console.log('Connected to WebSocket');
-
       intervalRef.current = setInterval(() => {
         if (ws.bufferedAmount === 0) {
           captureAndSendFrame();
@@ -92,26 +165,17 @@ export function LiveCamera() {
       console.error('WebSocket error:', error);
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket closed by server');
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.close();
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (wsRef.current?.readyState === WebSocket.OPEN) wsRef.current.close();
+
+      // Stop video tracks on full unmount
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
+        stream.getTracks().forEach((t) => t.stop());
       }
     };
-  }, []);
+  }, []); // Run once on mount
 
   const processDetectionsForCapture = async (detections: Detection[]) => {
     const now = Date.now();
@@ -344,26 +408,22 @@ export function LiveCamera() {
       <div className="flex w-full items-center justify-between">
         <Select
           isRequired
-          selectedKey={selectedKey}
-          placeholder="Select team member"
-          items={cameraItems}
+          selectedKey={selectedDeviceId || ''}
+          placeholder="Select camera"
+          items={cameras}
           className="w-64"
-          onSelectionChange={(key) => setSelectedKey(key as string)}
+          onSelectionChange={(key) => setSelectedDeviceId(key as string)}
         >
           {(item) => (
-            <Select.Item
-              id={item.id}
-              supportingText={item.supportingText}
-              isDisabled={item.isDisabled}
-              icon={item.icon}
-              avatarUrl={item.avatarUrl}
-            >
+            <Select.Item id={item.id} textValue={item.label}>
               {item.label}
             </Select.Item>
           )}
         </Select>
 
-        <span className="text-2xl">03.01:00 PM</span>
+        <span className="text-2xl font-variant-numeric tabular-nums">
+          {currentTime || '--:--:-- --'}
+        </span>
       </div>
 
       <div className="relative mt-4 w-full">
@@ -389,28 +449,30 @@ export function LiveCamera() {
           <hr className="border-gray-200 dark:border-gray-800" />
           <dl className="flex w-full justify-between gap-1">
             <dt className="text-gray-500">Camera Name</dt>
-            <dd>ASUS FHD Camera</dd>
+            <dd className="truncate max-w-[200px]" title={cameraStats.label}>{cameraStats.label || '-'}</dd>
           </dl>
           <hr className="border-gray-200 dark:border-gray-800" />
           <dl className="flex w-full justify-between gap-16">
             <dt className="shrink-0 text-gray-500">Device ID</dt>
-            <dd className="truncate">vFe1EMquVUzOJGjWCXQLHiYRtDvFe1EMquVUzOJGjWCXQLHiYRtD</dd>
+            <dd className="truncate text-right" title={cameraStats.deviceId}>
+              {cameraStats.deviceId || '-'}
+            </dd>
           </dl>
         </div>
         <div className="mt-4 flex w-full flex-col gap-2">
           <dl className="flex w-full justify-between gap-1">
             <dt className="text-gray-500">Width</dt>
-            <dd>640 px</dd>
+            <dd>{cameraStats.width > 0 ? `${cameraStats.width} px` : '-'}</dd>
           </dl>
           <hr className="border-gray-200 dark:border-gray-800" />
           <dl className="flex w-full justify-between gap-1">
             <dt className="text-gray-500">Height</dt>
-            <dd>480 px</dd>
+            <dd>{cameraStats.height > 0 ? `${cameraStats.height} px` : '-'}</dd>
           </dl>
           <hr className="border-gray-200 dark:border-gray-800" />
           <dl className="flex w-full justify-between gap-1">
             <dt className="text-gray-500">Frame Rate</dt>
-            <dd className="truncate">30 fps</dd>
+            <dd className="truncate">{cameraStats.frameRate > 0 ? `${cameraStats.frameRate} fps` : '-'}</dd>
           </dl>
         </div>
       </div>
