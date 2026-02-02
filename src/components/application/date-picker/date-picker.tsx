@@ -22,6 +22,7 @@ interface DatePickerProps extends AriaDatePickerProps<DateValue> {
   onApply?: () => void;
   /** The function to call when the cancel button is clicked. */
   onCancel?: () => void;
+  showButtons?: boolean;
 }
 
 export const DatePicker = ({
@@ -30,6 +31,7 @@ export const DatePicker = ({
   onChange,
   onApply,
   onCancel,
+  showButtons = true,
   ...props
 }: DatePickerProps) => {
   const formatter = useDateFormatter({
@@ -44,7 +46,12 @@ export const DatePicker = ({
   return (
     <AriaDatePicker shouldCloseOnSelect={false} {...props} value={value} onChange={setValue}>
       <AriaGroup>
-        <Button size="md" className="w-full justify-start" color="secondary" iconLeading={CalendarIcon}>
+        <Button
+          size="md"
+          className="w-full justify-start"
+          color="secondary"
+          iconLeading={CalendarIcon}
+        >
           {formattedDate}
         </Button>
       </AriaGroup>
@@ -67,28 +74,30 @@ export const DatePicker = ({
               <div className="flex px-6 py-5">
                 <Calendar highlightedDates={highlightedDates} />
               </div>
-              <div className="border-secondary grid grid-cols-2 gap-3 border-t p-4">
-                <Button
-                  size="md"
-                  color="secondary"
-                  onClick={() => {
-                    onCancel?.();
-                    close();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  size="md"
-                  color="primary"
-                  onClick={() => {
-                    onApply?.();
-                    close();
-                  }}
-                >
-                  Apply
-                </Button>
-              </div>
+              {showButtons && (
+                <div className="border-secondary grid grid-cols-2 gap-3 border-t p-4">
+                  <Button
+                    size="md"
+                    color="secondary"
+                    onClick={() => {
+                      onCancel?.();
+                      close();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="md"
+                    color="primary"
+                    onClick={() => {
+                      onApply?.();
+                      close();
+                    }}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </AriaDialog>

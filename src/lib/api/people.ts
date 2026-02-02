@@ -20,6 +20,17 @@ export async function getPeople(
   return res.json();
 }
 
+export async function getPerson(
+  id: number,
+): Promise<{ success: boolean; message: string; data: Person }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/person/${id}`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch person');
+  }
+  return res.json();
+}
+
 export interface CreatePersonPayload {
   name: string;
   gender: string;
