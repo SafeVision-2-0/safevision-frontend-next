@@ -1,5 +1,6 @@
 // src/lib/api/history.ts
 import { ImageResponse } from '@/types/image';
+import { Meta } from '@/types/global';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -24,12 +25,7 @@ export interface HistoryItem {
 export interface HistoryResponse {
   success: boolean;
   data: HistoryItem[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  meta: Meta;
 }
 
 export interface GetHistoryParams {

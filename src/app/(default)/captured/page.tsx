@@ -1,55 +1,127 @@
+// src/app/(default)/captured/page.tsx
 'use client';
 
 import Section from '@/components/layout/section';
 import Heading from '@/components/layout/heading';
 import { Select } from '@/components/base/select/select';
 import { User01 } from '@untitledui/icons';
-import { Clock, Calendar, X as Close, Cake, Mars, Users, IdCard } from 'lucide-react';
 import { getLocalTimeZone, today } from '@internationalized/date';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateValue } from 'react-aria-components';
-import { DateRangePicker } from '@/components/application/date-picker/date-range-picker';
+import { DatePicker } from '@/components/application/date-picker/date-picker';
 import * as Paginations from '@/components/application/pagination/pagination';
-import * as Modals from '@/components/application/modals/modal';
-import { Avatar } from '@/components/base/avatar/avatar';
-import CapturedDetails from '@/components/custom/capturedDetails';
+import CapturedDetails from '@/components/custom/captured-details';
+import { Person } from '@/types/person';
+import { getHistory, HistoryItem } from '@/lib/api/history';
+import { getPeople } from '@/lib/api/people';
+import { buildImageUrl } from '@/lib/helpers/format';
+import { Meta } from '@/types/global';
 
 export default function Captured() {
-  const people = [
-    { label: 'Ikram Sabila', id: '1' },
-    { label: 'Halilintar Daiva', id: '2' },
-    { label: 'Andra Dzaki', id: '3' },
-  ];
-
   const now = today(getLocalTimeZone());
 
-  const [selectedPerson, setSelectedPerson] = useState<string>('1');
-  const [value, setValue] = useState<{ start: DateValue; end: DateValue } | null>({
-    start: now.subtract({ days: 7 }),
-    end: now,
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const total = 10;
+  const [people, setPeople] = useState<Person[]>([]);
+  const [selectedPerson, setSelectedPerson] = useState<string>('all');
+  const [selectedDate, setSelectedDate] = useState<DateValue | null>(now);
+  const [capturedHistory, setCapturedHistory] = useState<HistoryItem[]>([]);
+  const [capturedMeta, setCapturedMeta] = useState<Meta>();
+  const [isLoading, setIsLoading] = useState(false);
   const [isDescOpen, setIsDescOpen] = useState(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryItem | null>(null);
+
+  // Pagination (keeping UI, though API logic from camera page is strictly used)
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 20;
+
+  // Fetch people list
+  useEffect(() => {
+    const fetchPeople = async () => {
+      try {
+        const response = await getPeople(1, 100);
+        setPeople(response.data);
+      } catch (error) {
+        console.error('Failed to fetch people:', error);
+      }
+    };
+
+    fetchPeople();
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedPerson, selectedDate]);
+
+
+  // Fetch history based on filters
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setIsLoading(true);
+      try {
+        const dateString = selectedDate
+          ? `${selectedDate.year}-${String(selectedDate.month).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
+          : undefined;
+
+        const response = await getHistory({
+          date: dateString,
+          profileId:
+            selectedPerson === 'all' || selectedPerson === 'unknown'
+              ? undefined
+              : Number(selectedPerson),
+          status: selectedPerson === 'unknown' ? 'unknown' : undefined,
+          page: currentPage,
+          limit: perPage,
+          // page: currentPage // Assuming API supports pagination if needed later
+        });
+        setCapturedMeta(response.meta);
+        setCapturedHistory(response.data);
+      } catch (error) {
+        console.error('Failed to fetch history:', error);
+        setCapturedHistory([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, [selectedDate, selectedPerson, currentPage]);
+
+  const handleHistoryClick = (item: HistoryItem) => {
+    setSelectedHistoryItem(item);
+    setIsDescOpen(true);
+  };
+
+  const handleHistoryClose = () => {
+    setSelectedHistoryItem(null);
+    setIsDescOpen(false);
+  };
+
+  const peopleItems = [
+    { label: 'All People', id: 'all' },
+    { label: 'Unknown', id: 'unknown' },
+    ...people.map((person) => ({
+      label: person.name,
+      id: String(person.id),
+    })),
+  ];
 
   return (
     <Section>
       <div className="flex w-full flex-col">
         <Heading className="mb-4">Captured People</Heading>
 
-        <div className="flex flex-col sm:flex-row sm:max-w-100 w-full gap-3">
-          <DateRangePicker
-            aria-label="Date range picker"
-            shouldCloseOnSelect={false}
-            value={value}
-            onChange={setValue}
+        <div className="flex w-full flex-col gap-3 sm:max-w-100 sm:flex-row">
+          <DatePicker
+            aria-label="Date picker"
+            value={selectedDate}
+            onChange={setSelectedDate}
+            showButtons={false}
+            className="w-full"
           />
 
           <Select
-            isRequired
             selectedKey={selectedPerson}
             placeholder="Select Person"
-            items={people}
+            items={peopleItems}
             className="w-full"
             placeholderIcon={User01}
             onSelectionChange={(key) => setSelectedPerson(key as string)}
@@ -69,94 +141,35 @@ export default function Captured() {
         </div>
 
         <div className="mt-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {[...Array(20)].map((_, i) => (
-            <img
-              key={i}
-              className="aspect-video w-full cursor-pointer rounded-lg object-cover"
-              src={`https://picsum.photos/id/${180 + i}/300/200`}
-              alt="Person"
-              onClick={() => setIsDescOpen(true)}
-            />
-          ))}
+          {isLoading ? (
+            <p className="col-span-full py-8 text-center text-gray-500">Loading...</p>
+          ) : capturedHistory.length === 0 ? (
+            <p className="col-span-full py-8 text-center text-gray-500">No captures found</p>
+          ) : (
+            capturedHistory.map((item) => (
+              <img
+                key={item.id}
+                className="aspect-video w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
+                src={buildImageUrl(item.imageCaptured)}
+                alt={item.profile?.name || 'Unknown Person'}
+                onClick={() => handleHistoryClick(item)}
+              />
+            ))
+          )}
         </div>
 
         <Paginations.PaginationPageMinimalCenter
           page={currentPage}
-          total={total}
+          total={capturedMeta?.totalPages ?? 0}
           onPageChange={setCurrentPage}
         />
 
-        <CapturedDetails isDescOpen={isDescOpen} setIsDescOpen={setIsDescOpen} />
-
-        {/*<Modals.DialogTrigger isOpen={isDescOpen} onOpenChange={setIsDescOpen}>*/}
-        {/*  <Modals.ModalOverlay>*/}
-        {/*    <Modals.Modal>*/}
-        {/*      <Modals.Dialog className="mx-auto grid max-w-225 grid-cols-1 gap-4 rounded-2xl bg-zinc-50 p-8 lg:grid-cols-3 lg:gap-10 dark:bg-black">*/}
-        {/*        <div className="mb-4 flex items-center justify-between lg:hidden" aria-hidden="true">*/}
-        {/*          <Heading>Details</Heading>*/}
-        {/*          <Close className="cursor-pointer" onClick={() => setIsDescOpen(false)} />*/}
-        {/*        </div>*/}
-        {/*        <div className={'lg:col-span-2'}>*/}
-        {/*          <img*/}
-        {/*            src="https://picsum.photos/id/180/300/200"*/}
-        {/*            className="aspect-video w-full rounded-lg object-cover"*/}
-        {/*            alt="Ikram"*/}
-        {/*          />*/}
-        {/*        </div>*/}
-        {/*        <div className="flex flex-col">*/}
-        {/*          <div className="mb-4 lg:flex items-center justify-between hidden" aria-hidden="true">*/}
-        {/*            <Heading>Details</Heading>*/}
-        {/*            <Close className="cursor-pointer" onClick={() => setIsDescOpen(false)} />*/}
-        {/*          </div>*/}
-        {/*          <div className="mt-4 flex items-center">*/}
-        {/*            <Avatar*/}
-        {/*              size="xl"*/}
-        {/*              alt="Olivia Rhye"*/}
-        {/*              src="https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80"*/}
-        {/*              className="shrink-0"*/}
-        {/*            />*/}
-        {/*            <span className="ml-4 flex-1 truncate">Olivia Rhye</span>*/}
-        {/*          </div>*/}
-
-        {/*          <div className="mt-4 flex flex-col gap-0.5 text-sm">*/}
-        {/*            <h2 className="text-gray-500">Spotted</h2>*/}
-        {/*            <span className="flex items-center gap-2">*/}
-        {/*              <Clock width={15} />*/}
-        {/*              <span>12.30:50 AM</span>*/}
-        {/*            </span>*/}
-        {/*            <span className="flex items-center gap-2">*/}
-        {/*              <Calendar width={15} />*/}
-        {/*              <span>January 30, 2025</span>*/}
-        {/*            </span>*/}
-        {/*          </div>*/}
-
-        {/*          <div className="mt-4 flex flex-col gap-0.5 text-sm">*/}
-        {/*            <h2 className="text-gray-500">Information</h2>*/}
-        {/*            <span className="flex items-center gap-2">*/}
-        {/*              <Mars width={15} />*/}
-        {/*              <span>Male</span>*/}
-        {/*            </span>*/}
-        {/*            <span className="flex items-center gap-2">*/}
-        {/*              <Cake width={15} />*/}
-        {/*              <span>January 30, 2003</span>*/}
-        {/*            </span>*/}
-        {/*            <span className="flex items-center gap-2">*/}
-        {/*              <Users width={15} />*/}
-        {/*              <span>Team Orion</span>*/}
-        {/*            </span>*/}
-        {/*            <span className="flex items-center gap-2">*/}
-        {/*              <IdCard width={15} />*/}
-        {/*              <span>AI/ML Engineer</span>*/}
-        {/*            </span>*/}
-        {/*          </div>*/}
-
-        {/*          /!*<p>Modal content goes here</p>*!/*/}
-        {/*          /!*<Button onPress={() => setIsDescOpen(false)}>Close</Button>*!/*/}
-        {/*        </div>*/}
-        {/*      </Modals.Dialog>*/}
-        {/*    </Modals.Modal>*/}
-        {/*  </Modals.ModalOverlay>*/}
-        {/*</Modals.DialogTrigger>*/}
+        <CapturedDetails
+          isDescOpen={isDescOpen}
+          setIsDescOpen={setIsDescOpen}
+          item={selectedHistoryItem}
+          onClose={handleHistoryClose}
+        />
       </div>
     </Section>
   );

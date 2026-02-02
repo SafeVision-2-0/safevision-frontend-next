@@ -1,15 +1,11 @@
 import { Position } from '@/types/position';
 import { Team } from '@/types/team';
+import { Meta } from '@/types/global';
 
 export interface PersonResponse {
   success: boolean;
   message: string;
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  meta: Meta;
   data: Person[];
 }
 
