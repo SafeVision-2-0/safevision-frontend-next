@@ -1,12 +1,9 @@
+import { Meta } from '@/types/global';
+
 export interface TeamResponse {
   success: boolean;
   message: string;
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  meta: Meta;
   data: Team[];
 }
 

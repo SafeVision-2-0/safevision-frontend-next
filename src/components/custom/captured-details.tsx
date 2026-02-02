@@ -67,11 +67,13 @@ export default function CapturedDetails({
               </span>
             </div>
             <div className={'lg:col-span-2'}>
-              <img
-                src={item?.imageCaptured ? buildImageUrl(item.imageCaptured) : ''}
-                className="aspect-video w-full rounded-lg object-cover"
-                alt="Captured Image"
-              />
+              {item?.imageCaptured && (
+                <img
+                  src={buildImageUrl(item.imageCaptured)}
+                  className="aspect-video w-full rounded-lg object-cover"
+                  alt="Captured Image"
+                />
+              )}
             </div>
             <div className="flex min-h-full flex-col">
               <div className="mb-4 hidden items-center justify-between lg:flex" aria-hidden="true">
@@ -79,7 +81,12 @@ export default function CapturedDetails({
                 <Close className="cursor-pointer" onClick={handleClose} />
               </div>
               <div className="mt-4 flex items-center">
-                <Avatar size="xl" alt="Profile Picture" initials={!item?.profile ? '?' : getInitials(item?.profile?.name)} className="shrink-0" />
+                <Avatar
+                  size="xl"
+                  alt="Profile Picture"
+                  initials={!item?.profile ? '?' : getInitials(item?.profile?.name)}
+                  className="shrink-0"
+                />
                 <span className="ml-4 flex-1 truncate">
                   {item?.profile?.name ?? 'Unknown Person'}
                 </span>
@@ -137,8 +144,6 @@ export default function CapturedDetails({
                 )}
               </div>
 
-              {/*<p>Modal content goes here</p>*/}
-              {/*<Button onPress={() => setIsDescOpen(false)}>Close</Button>*/}
             </div>
           </Modals.Dialog>
         </Modals.Modal>

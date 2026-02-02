@@ -15,7 +15,7 @@ import { getHistory, HistoryItem } from '@/lib/api/history';
 import { getPeople } from '@/lib/api/people';
 import { Person } from '@/types/person';
 import { buildImageUrl, formatDate, formatTime } from '@/lib/helpers/format';
-import CapturedDetails from '@/components/custom/capturedDetails';
+import CapturedDetails from '@/components/custom/captured-details';
 
 export default function Camera() {
   const now = today(getLocalTimeZone());
@@ -42,31 +42,34 @@ export default function Camera() {
     fetchPeople();
   }, []);
 
+  const fetchHistory = async () => {
+    setIsLoading(true);
+    try {
+      const dateString = selectedDate
+        ? `${selectedDate.year}-${String(selectedDate.month).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
+        : undefined;
+
+      const response = await getHistory({
+        date: dateString,
+        profileId:
+          selectedPerson === 'all' || selectedPerson === 'unknown'
+            ? undefined
+            : Number(selectedPerson),
+        status: selectedPerson === 'unknown' ? 'unknown' : undefined,
+        limit: 50,
+      });
+
+      setCapturedHistory(response.data);
+    } catch (error) {
+      console.error('Failed to fetch history:', error);
+      setCapturedHistory([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Fetch history based on filters
   useEffect(() => {
-    const fetchHistory = async () => {
-      setIsLoading(true);
-      try {
-        const dateString = selectedDate
-          ? `${selectedDate.year}-${String(selectedDate.month).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
-          : undefined;
-
-        const response = await getHistory({
-          date: dateString,
-          profileId: selectedPerson === 'all' || selectedPerson === 'unknown' ? undefined : Number(selectedPerson),
-          status: selectedPerson === 'unknown' ? 'unknown' : undefined,
-          limit: 50,
-        });
-
-        setCapturedHistory(response.data);
-      } catch (error) {
-        console.error('Failed to fetch history:', error);
-        setCapturedHistory([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchHistory();
   }, [selectedDate, selectedPerson]);
 
@@ -90,12 +93,16 @@ export default function Camera() {
     })),
   ];
 
+  const onHistorySent = () => {
+    fetchHistory();
+  }
+
   return (
     <Section>
       <>
         <div className="flex w-full gap-6">
           {/* Left Side: Live Feed */}
-          <LiveCamera />
+          <LiveCamera onHistorySent={onHistorySent} />
 
           {/* Right Side: Captured List */}
           <div className="w-100 shrink-0">

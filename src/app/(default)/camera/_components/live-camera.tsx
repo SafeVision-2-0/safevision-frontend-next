@@ -12,6 +12,10 @@ type Detection = {
   profile_id?: number;
 };
 
+interface LiveCameraProps {
+  onHistorySent?: () => void;
+}
+
 type CaptureState = {
   profileId: number;
   firstSeen: number;
@@ -28,7 +32,7 @@ const CAPTURE_CONFIG = {
   MAX_CAPTURES_PER_SESSION: 1, // Capture only once per session
 };
 
-export function LiveCamera() {
+export function LiveCamera({ onHistorySent }: LiveCameraProps) {
   const [selectedKey, setSelectedKey] = useState<string>('1');
   const [detections, setDetections] = useState<Detection[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
@@ -310,6 +314,8 @@ export function LiveCamera() {
       isUnknown,
       profileId: isUnknown ? undefined : detection.profile_id,
     });
+
+    onHistorySent?.()
   };
 
   useEffect(() => {
