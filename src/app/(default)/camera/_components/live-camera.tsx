@@ -32,6 +32,8 @@ const CAPTURE_CONFIG = {
   MAX_CAPTURES_PER_SESSION: 1, // Capture only once per session
 };
 
+const UNKNOWN_PROFILE_ID = -1;
+
 export function LiveCamera({ onHistorySent }: LiveCameraProps) {
   const [selectedKey, setSelectedKey] = useState<string>('1');
   const [detections, setDetections] = useState<Detection[]>([]);
@@ -183,9 +185,7 @@ export function LiveCamera({ onHistorySent }: LiveCameraProps) {
 
   const processDetectionsForCapture = async (detections: Detection[]) => {
     const now = Date.now();
-    const currentProfileIds = new Set(
-      detections.filter((d) => d.profile_id).map((d) => d.profile_id!),
-    );
+    const currentProfileIds = new Set(detections.map((d) => d.profile_id ?? UNKNOWN_PROFILE_ID));
 
     // Clean up state for persons no longer detected
     for (const [profileId, state] of captureStateRef.current) {
@@ -198,15 +198,11 @@ export function LiveCamera({ onHistorySent }: LiveCameraProps) {
 
     // Process each detection
     for (const detection of detections) {
-      const { profile_id } = detection;
-
-      // Skip unknown persons (no profile_id)
-      if (!profile_id) continue;
+      const profile_id = detection.profile_id ?? UNKNOWN_PROFILE_ID;
 
       let state = captureStateRef.current.get(profile_id);
 
       if (!state) {
-        // First time seeing this person
         state = {
           profileId: profile_id,
           firstSeen: now,
@@ -243,6 +239,7 @@ export function LiveCamera({ onHistorySent }: LiveCameraProps) {
 
       // Check if we should capture this detection
       const shouldCapture = evaluateCaptureConditions(state, now);
+      console.log('should capture');
 
       if (shouldCapture) {
         try {
