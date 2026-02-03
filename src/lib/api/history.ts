@@ -28,6 +28,24 @@ export interface HistoryResponse {
   meta: Meta;
 }
 
+export interface HistoryCountResponse {
+  success: boolean;
+  message: string;
+  data: number;
+}
+
+export interface MostCapturedResponse {
+  success: boolean;
+  message: string;
+  data: MostCapturedData[];
+}
+
+export interface MostCapturedData {
+  profileId: number;
+  profileName: string;
+  count: number;
+}
+
 export interface GetHistoryParams {
   page?: number;
   limit?: number;
@@ -72,6 +90,42 @@ export async function getHistory(params: GetHistoryParams = {}): Promise<History
 
   if (!response.ok) {
     throw new Error(`Failed to fetch history: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getHistoryCount(
+  status: 'unknown' | 'known',
+  date: string,
+): Promise<HistoryCountResponse> {
+  const queryParams = new URLSearchParams();
+  queryParams.append('status', status);
+  queryParams.append('date', date);
+
+  const response = await fetch(`${BASE_URL}/history/count?${queryParams.toString()}`, {
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch history count: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getMostCaptured(
+  date: string,
+): Promise<MostCapturedResponse> {
+  const queryParams = new URLSearchParams();
+  queryParams.append('date', date);
+
+  const response = await fetch(`${BASE_URL}/history/most-capture?${queryParams.toString()}`, {
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch most captured: ${response.statusText}`);
   }
 
   return response.json();
