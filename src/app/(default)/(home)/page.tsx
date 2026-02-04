@@ -15,7 +15,6 @@ import {
   getMostCaptured,
   HistoryItem,
   MostCapturedData,
-  MostCapturedResponse,
 } from '@/lib/api/history';
 import { buildImageUrl, todaysDate } from '@/lib/helpers/format';
 import CapturedDetails from '@/components/custom/captured-details';
@@ -26,18 +25,6 @@ const config = {
 }
 
 export default function Home() {
-  const router = useRouter();
-
-  const people = [
-    { label: 'Ikram Sabila', id: '1' },
-    { label: 'Halilintar Daiva', id: '2' },
-    { label: 'Andra Dzaki', id: '3' },
-  ];
-  const cameraItems = [
-    { label: 'ASUS FHD Camera', id: '1' },
-    { label: 'OBS Virtual Camera', id: '2' },
-  ];
-
   const [time, setTime] = useState<Date>(() => new Date());
   const [showColon, setShowColon] = useState<boolean>(true);
   const [isDescOpen, setIsDescOpen] = useState<boolean>(false);
@@ -108,8 +95,6 @@ export default function Home() {
 
     fetchMostCaptured();
   }, []);
-
-  const [selectedKey, setSelectedKey] = useState<string>('1');
 
   const parts = new Intl.DateTimeFormat(undefined, {
     hour: 'numeric',
@@ -189,7 +174,7 @@ export default function Home() {
             <HomeCameraPreview />
 
             <div className="flex w-full flex-col gap-0 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
-              <h2 className="text-xl">Most Captured</h2>
+              <h2 className="text-xl">Most Captured Today</h2>
               <div className="mt-4 flex w-full flex-col gap-2">
                 {mostCaptured.length === 0 ? (
                   <p className="text-center">No data available</p>
