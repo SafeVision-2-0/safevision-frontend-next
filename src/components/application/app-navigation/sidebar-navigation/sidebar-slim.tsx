@@ -2,7 +2,7 @@
 
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
-import { LifeBuoy01, LogOut01, Settings01 } from '@untitledui/icons';
+import { LifeBuoy01, LogOut01, Moon01, Settings01, Sun } from '@untitledui/icons';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Button as AriaButton,
@@ -23,6 +23,9 @@ import { NavItemButton } from '../base-components/nav-item-button';
 import { NavList } from '../base-components/nav-list';
 import type { NavItemType } from '../config';
 import SafevisionAppLogo from '@/components/foundations/logo/safevision-app-logo';
+import { useAuth } from '@/contexts/auth-context';
+import { getInitials } from '@/lib/helpers/format';
+import { useTheme } from 'next-themes';
 
 interface SidebarNavigationSlimProps {
   /** URL of the currently active item. */
@@ -56,6 +59,8 @@ export const SidebarNavigationSlim = ({
   }, []);
 
   const isSecondarySidebarVisible = isHovering && Boolean(currentItem.items?.length);
+  const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
 
   const MAIN_SIDEBAR_WIDTH = 68;
   const SECONDARY_SIDEBAR_WIDTH = 268;
@@ -230,38 +235,29 @@ export const SidebarNavigationSlim = ({
         <MobileNavigationHeader>
           <aside className="group bg-primary flex h-full max-h-full w-full max-w-full flex-col justify-between overflow-y-auto pt-4">
             <div className="px-4">
-              <UntitledLogo className="h-8" />
+              <SafevisionAppLogo full />
             </div>
 
             <NavList items={items} />
 
             <div className="mt-auto flex flex-col gap-5 px-2 py-4">
-              <div className="flex flex-col gap-2">
-                <NavItemBase
-                  current={activeUrl === '/support'}
-                  type="link"
-                  href="/support"
-                  icon={LifeBuoy01}
-                >
-                  Support
-                </NavItemBase>
-                <NavItemBase
-                  current={activeUrl === '/settings'}
-                  type="link"
-                  href="/settings"
-                  icon={Settings01}
-                >
-                  Settings
-                </NavItemBase>
-              </div>
-
+              <Button
+                aria-label="Toggle theme"
+                color="tertiary"
+                size="sm"
+                className="justify-start"
+                iconLeading={theme === 'light' ? Sun : Moon01}
+                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              >
+                {theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+              </Button>
               <div className="border-secondary relative flex items-center gap-3 border-t pt-6 pr-8 pl-2">
                 <AvatarLabelGroup
                   status="online"
                   size="md"
-                  src="https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80"
-                  title="Olivia Rhye"
-                  subtitle="olivia@untitledui.com"
+                  initials={getInitials(user?.username ?? '')}
+                  title={user?.profile?.name ?? ''}
+                  subtitle={user?.email ?? ''}
                 />
 
                 <div className="absolute top-1/2 right-0 -translate-y-1/2">

@@ -5,6 +5,7 @@ import type { NavItemType } from '@/components/application/app-navigation/config
 import { SidebarNavigationSlim } from '@/components/application/app-navigation/sidebar-navigation/sidebar-slim';
 import { usePathname } from 'next/navigation';
 import { House, Video, Image, Database } from 'lucide-react';
+import { AuthProvider } from '@/contexts/auth-context';
 
 const navItems: (NavItemType & { icon: FC<{ className?: string }> })[] = [
   {
@@ -37,10 +38,7 @@ export default function DefaultLayout({
   const pathname = usePathname();
   return (
     <>
-      <SidebarNavigationSlim
-        activeUrl={pathname}
-        items={navItems}
-      />
+      <SidebarNavigationSlim activeUrl={pathname} items={navItems} />
       <div className="lg:pl-17">{children}</div>
     </>
   );

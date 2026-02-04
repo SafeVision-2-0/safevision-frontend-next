@@ -1,6 +1,8 @@
 'use client';
 
 import type { PropsWithChildren } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { X as CloseIcon, Menu02 } from '@untitledui/icons';
 import {
   Button as AriaButton,
@@ -11,12 +13,20 @@ import {
 } from 'react-aria-components';
 import { UntitledLogo } from '@/components/foundations/logo/untitledui-logo';
 import { cx } from '@/utils/cx';
+import SafevisionAppLogo from '@/components/foundations/logo/safevision-app-logo';
 
 export const MobileNavigationHeader = ({ children }: PropsWithChildren) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   return (
-    <AriaDialogTrigger>
-      <header className="border-secondary bg-primary flex h-16 items-center justify-between border-b py-3 pr-2 pl-4 lg:hidden">
-        <UntitledLogo />
+    <AriaDialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+      <header className="border-secondary bg-primary sticky top-0 z-40 flex h-16 items-center justify-between border-b py-3 pr-2 pl-4 lg:hidden">
+        <SafevisionAppLogo full />
 
         <AriaButton
           aria-label="Expand navigation menu"

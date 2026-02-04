@@ -19,12 +19,14 @@ import {
 import { buildImageUrl, todaysDate } from '@/lib/helpers/format';
 import CapturedDetails from '@/components/custom/captured-details';
 import { HomeCameraPreview } from '@/app/(default)/(home)/_components/camera-preview';
+import { useAuth } from '@/contexts/auth-context';
 
 const config = {
   HISTORY_LIMIT: 10,
-}
+};
 
 export default function Home() {
+  const { user } = useAuth(); // Access user data from Context
   const [time, setTime] = useState<Date>(() => new Date());
   const [showColon, setShowColon] = useState<boolean>(true);
   const [isDescOpen, setIsDescOpen] = useState<boolean>(false);
@@ -87,7 +89,7 @@ export default function Home() {
     const fetchMostCaptured = async () => {
       try {
         const res = await getMostCaptured(todaysDate());
-        if(res.success) setMostCaptured(res.data);
+        if (res.success) setMostCaptured(res.data);
       } catch (error) {
         console.error('Failed to fetch stats', error);
       }
@@ -115,11 +117,15 @@ export default function Home() {
     setIsDescOpen(false);
   };
 
+  // Capitalize usage
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const displayName = user?.profile?.name ?? '';
+
   return (
     <Section>
       <div className="flex w-full flex-col gap-8">
         <div className="flex w-full flex-col">
-          <Heading className="mb-4">Good Morning, Hal</Heading>
+          <Heading className="mb-4">Hello, {displayName}</Heading>
 
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div className="flex flex-col items-center gap-0 rounded-xl border border-gray-200 p-6 text-center dark:border-gray-800">
@@ -169,7 +175,6 @@ export default function Home() {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-4">
-
             {/*camera part*/}
             <HomeCameraPreview />
 
@@ -181,12 +186,14 @@ export default function Home() {
                 ) : (
                   mostCaptured.map((item, i) => (
                     <>
-                      <dl className="grid w-full grid-cols-4 gap-1">
-                        <dt className="col-span-3 truncate text-gray-500">{item.profileName}</dt>
-                        <dd className="text-end">{item.count}</dd>
-                      </dl>
+                      <div key={`mc-${i}`}>
+                        <dl className="grid w-full grid-cols-4 gap-1">
+                          <dt className="col-span-3 truncate text-gray-500">{item.profileName}</dt>
+                          <dd className="text-end">{item.count}</dd>
+                        </dl>
+                      </div>
                       {i === mostCaptured.length - 1 ? null : (
-                        <hr className="border-gray-200 dark:border-gray-800" />
+                        <hr key={`hr-${i}`} className="border-gray-200 dark:border-gray-800" />
                       )}
                     </>
                   ))
