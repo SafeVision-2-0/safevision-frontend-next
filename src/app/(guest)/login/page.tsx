@@ -1,24 +1,53 @@
 'use client';
 
-import { TabList, Tabs } from "@/components/application/tabs/tabs";
-import { Button } from "@/components/base/buttons/button";
-import { SocialButton } from "@/components/base/buttons/social-button";
-import { Checkbox } from "@/components/base/checkbox/checkbox";
-import { Form } from "@/components/base/form/form";
-import { Input } from "@/components/base/input/input";
-import { UntitledLogoMinimal } from "@/components/foundations/logo/untitledui-logo-minimal";
-import { BackgroundPattern } from "@/components/shared-assets/background-patterns";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/base/buttons/button';
+import { Checkbox } from '@/components/base/checkbox/checkbox';
+import { Form } from '@/components/base/form/form';
+import { Input } from '@/components/base/input/input';
+import { BackgroundPattern } from '@/components/shared-assets/background-patterns';
 import SafevisionAppLogo from '@/components/foundations/logo/safevision-app-logo';
+import { login } from '@/lib/api/auth';
+import { useAuth } from '@/contexts/auth-context';
 
+export default function LoginPage() {
+  const router = useRouter();
+  const { refreshUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-const tabs = [
-  { id: "signup", label: "Sign up" },
-  { id: "login", label: "Log in" },
-];
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-export default function LoginPage()  {
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      const data = await login({ email, password });
+
+      // Store token in cookie (expires in 1 day)
+      const expires = new Date();
+      expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000);
+      document.cookie = `token=${data.token}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+
+      // 2. Refetch user data immediately so context is updated before redirect
+      await refreshUser();
+
+      router.refresh(); // Refresh server components (middleware/server-side checks)
+      router.push('/');
+    } catch (err: any) {
+      setError(err.message || 'Invalid credentials');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <section className="bg-primary relative flex flex-col justify-center min-h-screen overflow-hidden px-4 py-12 md:px-8">
+    <section className="bg-primary relative flex min-h-screen flex-col justify-center overflow-hidden px-4 py-12 md:px-8">
       <div className="relative z-10 mx-auto flex w-full flex-col gap-8 sm:max-w-90">
         <div className="flex flex-col items-center gap-6 text-center">
           <div className="relative">
@@ -44,14 +73,13 @@ export default function LoginPage()  {
           </div>
         </div>
 
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const data = Object.fromEntries(new FormData(e.currentTarget));
-            console.log('Form data:', data);
-          }}
-          className="z-10 flex flex-col gap-6"
-        >
+        <Form onSubmit={handleSubmit} className="z-10 flex flex-col gap-6">
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-500">
+              {error}
+            </div>
+          )}
+
           <div className="flex flex-col gap-5">
             <Input
               isRequired
@@ -78,12 +106,12 @@ export default function LoginPage()  {
           </div>
 
           <div className="flex flex-col gap-4">
-            <Button type="submit" size="lg">
-              Sign in
+            <Button type="submit" size="lg" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
           </div>
         </Form>
       </div>
     </section>
   );
-};
+}

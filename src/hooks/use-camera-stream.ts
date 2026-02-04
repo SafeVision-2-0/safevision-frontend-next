@@ -36,6 +36,7 @@ export type CameraDevice = {
 const CAPTURE_CONFIG = {
   MIN_DURATION: 1000,
   SESSION_TIMEOUT: 60000,
+  UNKNOWN_PROFILE_SESSION_TIMEOUT: 3000,
   CONFIDENCE_THRESHOLD: 0.7,
   MAX_CAPTURES_PER_SESSION: 1,
 };
@@ -216,7 +217,7 @@ export function useCameraStream(options: UseCameraStreamOptions = {}) {
 
       onHistorySent?.();
     },
-    [onHistorySent],
+    [],
   );
 
   const evaluateCaptureConditions = useCallback((state: CaptureState, now: number): boolean => {
@@ -255,8 +256,11 @@ export function useCameraStream(options: UseCameraStreamOptions = {}) {
         } else {
           if (!state.sessionActive) {
             const timeSinceLastSeen = now - state.lastSeen;
+            const timeoutThreshold = profile_id === UNKNOWN_PROFILE_ID
+              ? CAPTURE_CONFIG.UNKNOWN_PROFILE_SESSION_TIMEOUT
+              : CAPTURE_CONFIG.SESSION_TIMEOUT;
 
-            if (timeSinceLastSeen >= CAPTURE_CONFIG.SESSION_TIMEOUT) {
+            if (timeSinceLastSeen >= timeoutThreshold) {
               state.firstSeen = now;
               state.captureCount = 0;
               state.lastCaptured = 0;

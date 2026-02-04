@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { RouteProvider } from '@/providers/router-provider';
 import { Theme } from '@/providers/theme';
 import '@/styles/globals.css';
+import { AuthProvider } from '@/contexts/auth-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -28,7 +29,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} scroll-smooth`} suppressHydrationWarning>
       <body className="bg-primary antialiased">
         <RouteProvider>
-          <Theme>{children}</Theme>
+          <AuthProvider>
+            <Theme>{children}</Theme>
+          </AuthProvider>
         </RouteProvider>
       </body>
     </html>

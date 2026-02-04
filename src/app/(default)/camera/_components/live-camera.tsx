@@ -1,4 +1,3 @@
-// src/app/(default)/camera/_components/live-camera.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
