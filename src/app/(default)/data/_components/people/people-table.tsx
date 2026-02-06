@@ -113,9 +113,9 @@ export function PeopleTable() {
         />
         <Table aria-label="People" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
           <Table.Header>
-            <Table.Head id="name" label="Name" isRowHeader allowsSorting className="w-1/4" />
-            <Table.Head id="gender" label="Gender" allowsSorting />
-            <Table.Head id="birth" label="Birth" allowsSorting />
+            <Table.Head id="name" label="Name" isRowHeader className="w-1/4" />
+            <Table.Head id="gender" label="Gender" />
+            <Table.Head id="birth" label="Birth" />
             <Table.Head id="position" label="Positions" />
             <Table.Head id="item" label="Teams" />
             <Table.Head id="actions" />
