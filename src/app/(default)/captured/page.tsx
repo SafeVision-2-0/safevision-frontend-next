@@ -16,12 +16,16 @@ import { getHistory, HistoryItem } from '@/lib/api/history';
 import { getPeople } from '@/lib/api/people';
 import { buildImageUrl } from '@/lib/helpers/format';
 import { Meta } from '@/types/global';
+import { useSearchParams } from 'next/navigation';
 
 export default function Captured() {
   const now = today(getLocalTimeZone());
 
+  const searchParams = useSearchParams();
+  const person = searchParams.get('person');
+
   const [people, setPeople] = useState<Person[]>([]);
-  const [selectedPerson, setSelectedPerson] = useState<string>('all');
+  const [selectedPerson, setSelectedPerson] = useState<string>(person ?? 'all');
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(now);
   const [capturedHistory, setCapturedHistory] = useState<HistoryItem[]>([]);
   const [capturedMeta, setCapturedMeta] = useState<Meta>();
@@ -140,7 +144,7 @@ export default function Captured() {
           </Select>
         </div>
 
-        <div className="mt-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="my-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading ? (
             <p className="col-span-full py-8 text-center text-gray-500">Loading...</p>
           ) : capturedHistory.length === 0 ? (

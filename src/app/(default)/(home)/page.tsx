@@ -5,7 +5,7 @@ import Section from '@/components/layout/section';
 import Heading from '@/components/layout/heading';
 import { Select } from '@/components/base/select/select';
 import { Dot } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Button } from '@/components/base/buttons/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -158,7 +158,7 @@ export default function Home() {
               <h2 className="mb-1 text-4xl font-bold">{unknownCount}</h2>
               <p>
                 Unknown Person Captured Today.{' '}
-                <Link href="/captured" className="underline hover:cursor-pointer">
+                <Link href="/captured?person=unknown" className="underline hover:cursor-pointer">
                   See
                 </Link>
               </p>
@@ -185,17 +185,17 @@ export default function Home() {
                   <p className="text-center">No data available</p>
                 ) : (
                   mostCaptured.map((item, i) => (
-                    <>
-                      <div key={`mc-${i}`}>
+                    <Fragment key={`mc-${i}`}>
+                      <div>
                         <dl className="grid w-full grid-cols-4 gap-1">
                           <dt className="col-span-3 truncate text-gray-500">{item.profileName}</dt>
                           <dd className="text-end">{item.count}</dd>
                         </dl>
                       </div>
                       {i === mostCaptured.length - 1 ? null : (
-                        <hr key={`hr-${i}`} className="border-gray-200 dark:border-gray-800" />
+                        <hr className="border-gray-200 dark:border-gray-800" />
                       )}
-                    </>
+                    </Fragment>
                   ))
                 )}
               </div>
