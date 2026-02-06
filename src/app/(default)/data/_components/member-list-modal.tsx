@@ -54,7 +54,7 @@ export default function MemberListModal({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       showCloseButton={false}
-      fitWidth={true}
+      className="w-260 max-w-full"
       title={`Member List - ${group?.name || ''}`}
       buttonLabel="Done"
       showSecondaryButton={false}
@@ -68,11 +68,12 @@ export default function MemberListModal({
             aria-label="Members"
             sortDescriptor={sortDescriptor}
             onSortChange={setSortDescriptor}
+            className="w-full"
           >
             <Table.Header>
-              <Table.Head id="name" label="Name" isRowHeader allowsSorting className="w-1/3" />
-              <Table.Head id="gender" label="Gender" allowsSorting />
-              <Table.Head id="birth" label="Birth" allowsSorting />
+              <Table.Head id="name" label="Name" isRowHeader className="w-1/3" />
+              <Table.Head id="gender" label="Gender" />
+              <Table.Head id="birth" label="Birth" />
               <Table.Head id="position" label="Positions" />
               <Table.Head id="team" label="Teams" />
             </Table.Header>

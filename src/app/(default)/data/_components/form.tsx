@@ -15,6 +15,7 @@ interface FormProps {
   title?: string;
   children: React.ReactNode;
   isSubmitting?: boolean;
+  className?: string;
 }
 
 export default function Form({
@@ -29,6 +30,7 @@ export default function Form({
   showSecondaryButton = true,
   children,
   isSubmitting = false,
+  className
 }: FormProps) {
   const onClose = () => {
     onOpenChange(false);
@@ -44,7 +46,7 @@ export default function Form({
         <Modals.Modal>
           <Modals.Dialog
             className={`
-              mx-auto flex ${fitWidth ? 'max-w-fit' : 'max-w-120'} flex-col gap-6 rounded-2xl bg-zinc-50 p-8 dark:bg-black
+              mx-auto flex ${fitWidth ? 'max-w-fit' : 'max-w-120'} ${className ?? ''} flex-col gap-6 rounded-2xl bg-zinc-50 p-8 dark:bg-black
             `}
           >
             <div className="mb-4 flex w-full items-center justify-between" aria-hidden="true">
