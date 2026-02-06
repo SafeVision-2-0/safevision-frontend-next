@@ -246,7 +246,7 @@ export const SidebarNavigationSlim = ({
                 color="tertiary"
                 size="sm"
                 className="justify-start"
-                iconLeading={theme === 'light' ? Sun : Moon01}
+                iconLeading={theme === 'light' ? Moon01 : Sun}
                 onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
               >
                 {theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
