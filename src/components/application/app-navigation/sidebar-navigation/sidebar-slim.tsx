@@ -26,6 +26,8 @@ import SafevisionAppLogo from '@/components/foundations/logo/safevision-app-logo
 import { useAuth } from '@/contexts/auth-context';
 import { getInitials } from '@/lib/helpers/format';
 import { useTheme } from 'next-themes';
+import { router } from 'next/client';
+import { useRouter } from 'next/navigation';
 
 interface SidebarNavigationSlimProps {
   /** URL of the currently active item. */
@@ -53,6 +55,15 @@ export const SidebarNavigationSlim = ({
   const [currentItem, setCurrentItem] = useState(activeItem || items[1]);
   const [isHovering, setIsHovering] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Clear cookie
+    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    router.refresh();
+    router.push('/login');
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -264,6 +275,7 @@ export const SidebarNavigationSlim = ({
                   <Button
                     size="sm"
                     color="tertiary"
+                    onClick={handleLogout}
                     iconLeading={
                       <LogOut01 className="text-fg-quaternary transition-inherit-all group-hover:text-fg-quaternary_hover size-5" />
                     }
