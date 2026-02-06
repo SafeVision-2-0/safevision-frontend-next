@@ -100,12 +100,12 @@ export default function Camera() {
   return (
     <Section>
       <>
-        <div className="flex w-full gap-6">
+        <div className="flex w-full gap-12 lg:gap-6 flex-col lg:flex-row">
           {/* Left Side: Live Feed */}
           <LiveCamera onHistorySent={onHistorySent} />
 
           {/* Right Side: Captured List */}
-          <div className="w-100 shrink-0">
+          <div className="w-full lg:w-90 xl:w-120 2xl:w-140 shrink-0">
             <Heading className="mb-4">Captured People</Heading>
 
             <div className="grid w-full grid-cols-2 gap-3">
@@ -139,7 +139,7 @@ export default function Camera() {
               </Select>
             </div>
 
-            <div className="mt-4 flex flex-col">
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-0">
               {isLoading ? (
                 <p className="text-tertiary py-8 text-center">Loading...</p>
               ) : capturedHistory.length === 0 ? (

@@ -82,7 +82,7 @@ export const NavAccountMenu = ({
             aria-label="Toggle theme"
             color="tertiary"
             size="sm"
-            iconLeading={theme === 'light' ? Sun : Moon01}
+            iconLeading={theme === 'light' ? Moon01 : Sun}
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
           />
         </div>

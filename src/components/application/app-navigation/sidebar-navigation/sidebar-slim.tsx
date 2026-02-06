@@ -81,7 +81,6 @@ export const SidebarNavigationSlim = ({
           hideBorder && !isSecondarySidebarVisible && 'ring-transparent',
         )}
       >
-
         <div className="flex justify-center px-3">
           <SafevisionAppLogo />
         </div>
@@ -132,7 +131,8 @@ export const SidebarNavigationSlim = ({
                   status="online"
                   src=""
                   size="md"
-                  alt="Olivia Rhye"
+                  alt={user?.profile?.name ?? ''}
+                  initials={getInitials(user?.username ?? '')}
                 />
               </AriaButton>
               <AriaPopover
@@ -246,7 +246,7 @@ export const SidebarNavigationSlim = ({
                 color="tertiary"
                 size="sm"
                 className="justify-start"
-                iconLeading={theme === 'light' ? Sun : Moon01}
+                iconLeading={theme === 'light' ? Moon01 : Sun}
                 onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
               >
                 {theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}

@@ -25,12 +25,14 @@
     "react-aria-components": "^1.14.0",
     "react-dom": "19.2.3",
     "react-stately": "^3.43.0",
+    "react-types": "^0.1.0",
     "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^2.0.1"
   },
   "devDependencies": {
+    "@react-types/shared": "^3.33.0",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",

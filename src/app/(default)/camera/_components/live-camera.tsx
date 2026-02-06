@@ -34,7 +34,7 @@ export function LiveCamera({ onHistorySent }: LiveCameraProps) {
   return (
     <div className="flex-1">
       <Heading className="mb-4">Live Camera</Heading>
-      <div className="flex w-full items-center justify-between">
+      <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-0 w-full sm:items-center justify-between">
         <Select
           isRequired
           selectedKey={selectedDeviceId || ''}
@@ -69,7 +69,7 @@ export function LiveCamera({ onHistorySent }: LiveCameraProps) {
         />
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
+      <div className="grid-cols-1 mt-4 grid md:gap-4 md:grid-cols-2">
         <div className="mt-4 flex w-full flex-col gap-2">
           <dl className="flex w-full justify-between gap-1">
             <dt className="text-gray-500">Camera Alias</dt>
@@ -89,8 +89,9 @@ export function LiveCamera({ onHistorySent }: LiveCameraProps) {
               {cameraStats.deviceId || '-'}
             </dd>
           </dl>
+          <hr className="md:hidden border-gray-200 dark:border-gray-800" />
         </div>
-        <div className="mt-4 flex w-full flex-col gap-2">
+        <div className="mt-2 md:mt-4 flex w-full flex-col gap-2">
           <dl className="flex w-full justify-between gap-1">
             <dt className="text-gray-500">Width</dt>
             <dd>{cameraStats.width > 0 ? `${cameraStats.width} px` : '-'}</dd>

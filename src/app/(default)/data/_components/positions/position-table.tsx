@@ -14,12 +14,14 @@ import Delete from '@/components/popup/delete';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { PositionFormModal } from './position-form-modal';
+import MemberListModal from '@/app/(default)/data/_components/member-list-modal';
 
 export function PositionTable() {
   // UI States
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showMemberList, setShowMemberList] = useState<boolean>(false);
 
   // Data States
   const [selectedPosition, setSelectedPosition] = useState<{ id: string; name: string } | null>(
@@ -72,6 +74,11 @@ export function PositionTable() {
     setShowDelete(true);
   };
 
+  const openMemberList = (team: { id: string; name: string }) => {
+    setSelectedPosition(team);
+    setShowMemberList(true);
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Failed to load</div>;
 
@@ -119,7 +126,12 @@ export function PositionTable() {
                   <Table.Cell className="whitespace-nowrap">
                     {item.memberCount > 0 ? (
                       <Tooltip title="Show members">
-                        <TooltipTrigger className="cursor-pointer">
+                        <TooltipTrigger
+                          className="cursor-pointer"
+                          onClick={() => {
+                            openMemberList({ id: String(item.id), name: item.name });
+                          }}
+                        >
                           <div className="flex -space-x-1">
                             {item.previewImages.slice(0, 5).map((img, i) => (
                               <Avatar
@@ -189,6 +201,14 @@ export function PositionTable() {
         onOpenChange={setShowForm}
         positionToEdit={selectedPosition}
         onSuccess={handleFormSuccess}
+      />
+
+      <MemberListModal
+        isOpen={showMemberList}
+        onOpenChange={setShowMemberList}
+        group={selectedPosition!}
+        onGroupChange={setSelectedPosition}
+        groupType="position"
       />
 
       <Delete

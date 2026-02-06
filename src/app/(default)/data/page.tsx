@@ -40,7 +40,7 @@ export default function Data() {
             value={selectedTabIndex as string}
             onChange={(event) => setSelectedTabIndex(event.target.value)}
             options={tabs.map((tab) => ({ label: tab.label, value: tab.id }))}
-            className="w-80 md:hidden"
+            className="w-80 max-w-full md:hidden"
           />
           <Tabs
             selectedKey={selectedTabIndex}

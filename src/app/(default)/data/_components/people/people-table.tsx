@@ -18,6 +18,7 @@ import { formatDate } from '@/utils/format';
 import { PersonBioModal } from './person-bio-modal';
 import { PersonAssignmentModal } from './person-assignment-modal';
 import { ImageUp } from 'lucide-react';
+import { getInitials } from '@/lib/helpers/format';
 
 export function PeopleTable() {
   // UI States
@@ -130,6 +131,7 @@ export function PeopleTable() {
                           ? `${process.env.NEXT_PUBLIC_BASE_API_URL}${item.profileImage}`
                           : undefined
                       }
+                      initials={getInitials(item.name)}
                       alt={item.name}
                       size="sm"
                     />
