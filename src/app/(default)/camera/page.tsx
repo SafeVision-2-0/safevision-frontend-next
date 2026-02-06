@@ -105,7 +105,7 @@ export default function Camera() {
           <LiveCamera onHistorySent={onHistorySent} />
 
           {/* Right Side: Captured List */}
-          <div className="w-full lg:w-100 shrink-0">
+          <div className="w-full lg:w-90 xl:w-120 2xl:w-140 shrink-0">
             <Heading className="mb-4">Captured People</Heading>
 
             <div className="grid w-full grid-cols-2 gap-3">
