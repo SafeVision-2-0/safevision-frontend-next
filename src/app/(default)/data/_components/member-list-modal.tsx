@@ -8,6 +8,7 @@ import { formatDate } from '@/utils/format';
 import useSWR from 'swr';
 import { useState } from 'react';
 import { SortDescriptor } from 'react-aria-components';
+import { getInitials } from '@/lib/helpers/format';
 
 interface MemberListModalProps {
   isOpen: boolean;
@@ -86,6 +87,7 @@ export default function MemberListModal({
                             ? `${process.env.NEXT_PUBLIC_BASE_API_URL}${item.profileImage}`
                             : undefined
                         }
+                        initials={getInitials(item.name)}
                         alt={item.name}
                         size="sm"
                       />
