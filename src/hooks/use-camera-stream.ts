@@ -256,9 +256,10 @@ export function useCameraStream(options: UseCameraStreamOptions = {}) {
         } else {
           if (!state.sessionActive) {
             const timeSinceLastSeen = now - state.lastSeen;
-            const timeoutThreshold = profile_id === UNKNOWN_PROFILE_ID
-              ? CAPTURE_CONFIG.UNKNOWN_PROFILE_SESSION_TIMEOUT
-              : CAPTURE_CONFIG.SESSION_TIMEOUT;
+            const timeoutThreshold =
+              profile_id === UNKNOWN_PROFILE_ID
+                ? CAPTURE_CONFIG.UNKNOWN_PROFILE_SESSION_TIMEOUT
+                : CAPTURE_CONFIG.SESSION_TIMEOUT;
 
             if (timeSinceLastSeen >= timeoutThreshold) {
               state.firstSeen = now;
@@ -292,7 +293,7 @@ export function useCameraStream(options: UseCameraStreamOptions = {}) {
     if (!autoConnect) return;
 
     const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BASE_WEBSOCKET}/ws/face-recognition/vggface2`,
+      `${process.env.NEXT_PUBLIC_BASE_WEBSOCKET}/ws/face-recognition/${process.env.NEXT_PUBLIC_AI_MODEL || 'vggface2'}`,
     );
     wsRef.current = ws;
 
