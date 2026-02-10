@@ -25,10 +25,10 @@ export function validatePersonName(name: string): ValidationResult {
   const trimmedName = name.trim();
 
   // Check length
-  if (trimmedName.length < 1 || trimmedName.length > 100) {
+  if (trimmedName.length > 100) {
     return {
       isValid: false,
-      error: 'Name must be between 1 and 100 characters',
+      error: 'Name must not exceed 100 characters',
     };
   }
 
@@ -64,8 +64,7 @@ export function validatePersonName(name: string): ValidationResult {
 /**
  * Validates a birthdate
  * - Must be a valid date
- * - Must be in the past
- * - Person must be at least 1 day old
+ * - Must be in the past (at least 1 day old)
  * - Person must not be older than 150 years
  */
 export function validateBirthdate(birthdate: string | null | undefined): ValidationResult {
@@ -108,16 +107,7 @@ export function validateBirthdate(birthdate: string | null | undefined): Validat
     };
   }
 
-  // Check minimum age (at least 1 day old)
-  const oneDayAgo = new Date(today);
-  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-
-  if (birthDate > oneDayAgo) {
-    return {
-      isValid: false,
-      error: 'Person must be at least 1 day old',
-    };
-  }
+  // No additional minimum age check needed - the above check ensures person is at least 1 day old
 
   // Check maximum age (150 years)
   const maxAge = 150;
