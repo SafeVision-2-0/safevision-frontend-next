@@ -15,6 +15,7 @@ import { Avatar } from '@/components/base/avatar/avatar';
 import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { PositionFormModal } from './position-form-modal';
 import MemberListModal from '@/app/(default)/data/_components/member-list-modal';
+import TableSkeleton from '@/app/(default)/data/_components/table-skeleton';
 
 export function PositionTable() {
   // UI States
@@ -79,7 +80,7 @@ export function PositionTable() {
     setShowMemberList(true);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <TableSkeleton />;
   if (error) return <div>Failed to load</div>;
 
   return (

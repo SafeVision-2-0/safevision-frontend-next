@@ -19,6 +19,7 @@ import { PersonBioModal } from './person-bio-modal';
 import { PersonAssignmentModal } from './person-assignment-modal';
 import { ImageUp } from 'lucide-react';
 import { getInitials } from '@/lib/helpers/format';
+import TableSkeleton from '@/app/(default)/data/_components/table-skeleton';
 
 export function PeopleTable() {
   // UI States
@@ -91,7 +92,7 @@ export function PeopleTable() {
     setShowDelete(true);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <TableSkeleton />;
 
   return (
     <>

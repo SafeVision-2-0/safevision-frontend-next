@@ -15,6 +15,7 @@ import { Avatar } from '@/components/base/avatar/avatar';
 import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { TeamFormModal } from './team-form-modal';
 import MemberListModal from '@/app/(default)/data/_components/member-list-modal';
+import TableSkeleton from '@/app/(default)/data/_components/table-skeleton';
 
 export function TeamTable() {
   // UI States
@@ -77,7 +78,7 @@ export function TeamTable() {
     setShowMemberList(true);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <TableSkeleton />;
   if (error) return <div>Failed to load</div>;
 
   return (
