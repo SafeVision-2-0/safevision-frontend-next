@@ -108,11 +108,10 @@ export function TeamTable() {
               id="name"
               label="Name"
               isRowHeader
-              allowsSorting
               className="w-full max-w-1/4"
             />
-            <Table.Head id="members" label="Members" allowsSorting />
-            <Table.Head id="created" label="Created At" allowsSorting />
+            <Table.Head id="members" label="Members" />
+            <Table.Head id="created" label="Created At" />
             <Table.Head id="actions" />
           </Table.Header>
 
