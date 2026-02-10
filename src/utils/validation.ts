@@ -79,9 +79,15 @@ export function validateBirthdate(birthdate: string | null | undefined): Validat
   let date: Date;
   try {
     // Handle ISO date format (YYYY-MM-DD)
-    // Add time component to ensure local timezone interpretation
-    const dateStr = birthdate.includes('T') ? birthdate : `${birthdate}T00:00:00`;
-    date = new Date(dateStr);
+    // Parse components explicitly to avoid timezone issues
+    const dateMatch = birthdate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (dateMatch) {
+      const [, year, month, day] = dateMatch;
+      date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    } else {
+      date = new Date(birthdate);
+    }
+    
     if (isNaN(date.getTime())) {
       return {
         isValid: false,
