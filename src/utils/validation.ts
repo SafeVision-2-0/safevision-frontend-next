@@ -111,10 +111,10 @@ export function validateBirthdate(birthdate: string | null | undefined): Validat
 
   // Check maximum age (150 years)
   // Calculate the minimum allowed birthdate by subtracting 150 years from today
+  // Using setFullYear to handle leap year edge cases properly
   const maxAge = 150;
-  const minYear = today.getFullYear() - maxAge;
-  const minDate = new Date(minYear, today.getMonth(), today.getDate());
-  minDate.setHours(0, 0, 0, 0);
+  const minDate = new Date(today);
+  minDate.setFullYear(today.getFullYear() - maxAge);
 
   if (date < minDate) {
     return {
