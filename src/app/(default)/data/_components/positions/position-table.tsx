@@ -141,6 +141,19 @@ export function PositionTable() {
                                 alt="Member"
                               />
                             ))}
+                            {[
+                              ...Array(
+                                (item.memberCount > 5 ? 5 : item.memberCount) -
+                                item.previewImages.length,
+                              ),
+                            ].map((img, i) => (
+                              <Avatar
+                                key={i}
+                                className="ring-bg-primary ring-[1.5px]"
+                                size="xs"
+                                alt="Member"
+                              />
+                            ))}
                             {item.memberCount > 5 && (
                               <Avatar
                                 size="xs"
