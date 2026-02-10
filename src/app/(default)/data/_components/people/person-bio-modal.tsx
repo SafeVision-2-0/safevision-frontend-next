@@ -93,6 +93,7 @@ export function PersonBioModal({
     }
 
     // Validate birthdate
+    // DateValue.toString() returns ISO format (YYYY-MM-DD)
     const birthValidation = validateBirthdate(birth ? birth.toString() : null);
     if (!birthValidation.isValid) {
       setBirthError(birthValidation.error);

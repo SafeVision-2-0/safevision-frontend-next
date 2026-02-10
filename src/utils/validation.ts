@@ -79,7 +79,9 @@ export function validateBirthdate(birthdate: string | null | undefined): Validat
   let date: Date;
   try {
     // Handle ISO date format (YYYY-MM-DD)
-    date = new Date(birthdate);
+    // Add time component to ensure local timezone interpretation
+    const dateStr = birthdate.includes('T') ? birthdate : `${birthdate}T00:00:00`;
+    date = new Date(dateStr);
     if (isNaN(date.getTime())) {
       return {
         isValid: false,
