@@ -8,6 +8,7 @@ import { Select } from '@/components/base/select/select';
 import { Label } from '@/components/base/input/label';
 import { DatePicker } from '@/components/application/date-picker/date-picker';
 import { createPerson, updatePerson } from '@/lib/api/people';
+import { validatePersonName, validateBirthdate } from '@/utils/validation';
 
 interface PersonBioModalProps {
   isOpen: boolean;
@@ -31,6 +32,8 @@ export function PersonBioModal({
   const [gender, setGender] = useState<string>('M');
   const [birth, setBirth] = useState<DateValue | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [nameError, setNameError] = useState<string | undefined>(undefined);
+  const [birthError, setBirthError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (isOpen) {
@@ -57,15 +60,58 @@ export function PersonBioModal({
         setGender('M');
         setBirth(null);
       }
+      // Clear errors when modal opens
+      setNameError(undefined);
+      setBirthError(undefined);
     }
   }, [isOpen, personToEdit]);
 
+  const handleNameChange = (value: string) => {
+    setName(value);
+    // Clear error when user starts typing
+    if (nameError) {
+      setNameError(undefined);
+    }
+  };
+
+  const handleBirthChange = (value: DateValue | null) => {
+    setBirth(value);
+    // Clear error when user changes date
+    if (birthError) {
+      setBirthError(undefined);
+    }
+  };
+
+  const validateForm = (): boolean => {
+    let isValid = true;
+
+    // Validate name
+    const nameValidation = validatePersonName(name);
+    if (!nameValidation.isValid) {
+      setNameError(nameValidation.error);
+      isValid = false;
+    }
+
+    // Validate birthdate
+    const birthValidation = validateBirthdate(birth ? birth.toString() : null);
+    if (!birthValidation.isValid) {
+      setBirthError(birthValidation.error);
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async () => {
-    if (!name.trim()) return;
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
-        name,
+        name: name.trim(),
         gender,
         birth: birth ? birth.toString() : '',
       };
@@ -96,7 +142,15 @@ export function PersonBioModal({
       isSubmitting={isSubmitting}
     >
       <div className="flex w-full flex-col gap-4">
-        <Input isRequired label="Name" className="w-full" value={name} onChange={setName} />
+        <Input
+          isRequired
+          label="Name"
+          className="w-full"
+          value={name}
+          onChange={handleNameChange}
+          isInvalid={!!nameError}
+          hint={nameError}
+        />
         <div className="grid grid-cols-2 gap-4">
           <Select
             isRequired
@@ -117,9 +171,13 @@ export function PersonBioModal({
             <DatePicker
               aria-label="Birth Date"
               value={birth}
-              onChange={setBirth}
+              onChange={handleBirthChange}
               className="w-full"
+              isInvalid={!!birthError}
             />
+            {birthError && (
+              <p className="text-xs text-red-500">{birthError}</p>
+            )}
           </div>
         </div>
       </div>
