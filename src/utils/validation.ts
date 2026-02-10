@@ -96,11 +96,11 @@ export function validateBirthdate(birthdate: string | null | undefined): Validat
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const birthDate = new Date(date);
-  birthDate.setHours(0, 0, 0, 0);
+  // Set time to midnight for comparison
+  date.setHours(0, 0, 0, 0);
 
   // Check if date is in the future
-  if (birthDate >= today) {
+  if (date >= today) {
     return {
       isValid: false,
       error: 'Birth date must be in the past',
@@ -110,11 +110,13 @@ export function validateBirthdate(birthdate: string | null | undefined): Validat
   // No additional minimum age check needed - the above check ensures person is at least 1 day old
 
   // Check maximum age (150 years)
+  // Calculate the minimum allowed birthdate by subtracting 150 years from today
   const maxAge = 150;
-  const minDate = new Date(today);
-  minDate.setFullYear(minDate.getFullYear() - maxAge);
+  const minYear = today.getFullYear() - maxAge;
+  const minDate = new Date(minYear, today.getMonth(), today.getDate());
+  minDate.setHours(0, 0, 0, 0);
 
-  if (birthDate < minDate) {
+  if (date < minDate) {
     return {
       isValid: false,
       error: `Birth date cannot be more than ${maxAge} years ago`,
