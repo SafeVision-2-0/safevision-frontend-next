@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  safevision-frontend:
+    container_name: safevision-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_BASE_AI_URL: ${NEXT_PUBLIC_BASE_AI_URL}
+        NEXT_PUBLIC_BASE_API_URL: ${NEXT_PUBLIC_BASE_API_URL}
+        NEXT_PUBLIC_BASE_WEBSOCKET: ${NEXT_PUBLIC_BASE_WEBSOCKET}
+        NEXT_PUBLIC_AI_MODEL: ${NEXT_PUBLIC_AI_MODEL}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
